@@ -27,10 +27,11 @@ public class AdministratorMenu {
             System.out.println("2. View Appointments");
             System.out.println("3. Manage Inventory");
             System.out.println("4. Approve Replenishment Requests");
-            System.out.println("5. Logout \n");
+            System.out.println("5. Change Password");
+            System.out.println("6. Logout \n");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
-            scanner.nextLine(); // consume newline
+            scanner.nextLine(); 
 
             switch (choice) {
                 case 1:
@@ -46,6 +47,9 @@ public class AdministratorMenu {
                     viewAndApproveRequests(); 
                     break;
                 case 5:
+                    administrator.changePassword(scanner);
+                    break;
+                case 6:
                     System.out.println("Logging out...");
                     return;
                 default:
@@ -124,17 +128,17 @@ public class AdministratorMenu {
         switch (role) {
             case DOCTOR:
                 newStaff = new Doctor(userID, password, name, gender, age);
-                hms.addDoctor((Doctor) newStaff); // Add doctor to HospitalManagementSystem
+                hms.addDoctor((Doctor) newStaff); 
                 break;
             case PHARMACIST:
                 InventoryManager inventoryManager = new InventoryManager(hms.getInventory());
                 newStaff = new Pharmacist(userID, password, name, gender, age, inventoryManager);
-                hms.addPharmacist((Pharmacist) newStaff); // Add pharmacist to HospitalManagementSystem
+                hms.addPharmacist((Pharmacist) newStaff); 
                 break;
             case ADMINISTRATOR:
                 AdminInventoryManager adminInventoryManager = hms.getAdminInventoryManager();
                 newStaff = new Administrator(userID, password, name, gender, age, adminInventoryManager);
-                hms.addAdministrator((Administrator) newStaff); // Add administrator to HospitalManagementSystem
+                hms.addAdministrator((Administrator) newStaff); 
                 break;
             default:
                 System.out.println("Invalid role. Staff not added.");
@@ -185,9 +189,10 @@ public class AdministratorMenu {
             System.out.println("4. Update Low Stock Threshold");
             System.out.println("5. Remove Medicine");
             System.out.println("6. Return to Main Menu");
+            
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
-            scanner.nextLine(); // consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
@@ -200,7 +205,7 @@ public class AdministratorMenu {
                     int stock = scanner.nextInt();
                     System.out.print("Enter low stock threshold: ");
                     int threshold = scanner.nextInt();
-                    scanner.nextLine(); // consume newline
+                    scanner.nextLine(); 
                     adminInventoryManager.addMedicine(name, stock, threshold);
                     break;
                 case 3:
@@ -208,7 +213,7 @@ public class AdministratorMenu {
                     String medName = scanner.nextLine();
                     System.out.print("Enter new stock level: ");
                     int newStock = scanner.nextInt();
-                    scanner.nextLine(); // consume newline
+                    scanner.nextLine(); 
                     adminInventoryManager.updateStockLevel(medName, newStock);
                     break;
                 case 4:
@@ -216,7 +221,7 @@ public class AdministratorMenu {
                     String thresholdName = scanner.nextLine();
                     System.out.print("Enter new low stock threshold: ");
                     int newThreshold = scanner.nextInt();
-                    scanner.nextLine(); // consume newline
+                    scanner.nextLine(); 
                     adminInventoryManager.updateLowStockThreshold(thresholdName, newThreshold);
                     break;
                 case 5:
@@ -225,7 +230,7 @@ public class AdministratorMenu {
                     adminInventoryManager.removeMedicine(removeName);
                     break;
                 case 6:
-                    return; // Return to main menu
+                    return; 
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
@@ -235,7 +240,7 @@ public class AdministratorMenu {
     public void viewAndApproveRequests() {
         System.out.println("Pending Replenishment Requests:");
 
-        // Temporary list to hold requests to be removed after iteration
+        // Temp list to hold requests to be removed after iteration
         List<ReplenishmentRequest> approvedRequests = new ArrayList<>();
 
         for (ReplenishmentRequest request : adminInventoryManager.getPendingRequests()) {
@@ -244,13 +249,12 @@ public class AdministratorMenu {
             String approval = scanner.nextLine();
 
             if (approval.equalsIgnoreCase("yes")) {
-                adminInventoryManager.approveReplenishmentRequest(request);  // This will now only update stock
-                approvedRequests.add(request);  // Add to list for later removal
+                adminInventoryManager.approveReplenishmentRequest(request);  // update stock
+                approvedRequests.add(request);  
                 System.out.println("Request approved for " + request.getMedicineName());
             }
         }
-
-        // Remove all approved requests after iteration to avoid ConcurrentModificationException
+        
         adminInventoryManager.getPendingRequests().removeAll(approvedRequests);
 
         if (adminInventoryManager.getPendingRequests().isEmpty()) {
