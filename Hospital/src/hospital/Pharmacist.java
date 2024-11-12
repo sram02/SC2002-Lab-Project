@@ -26,9 +26,9 @@ public class Pharmacist extends Staff {
 
         if (newPassword.equals(confirmPassword)) {
             this.setPassword(newPassword);
-            System.out.println("Password changed successfully.");
+            System.out.println("Password changed successfully. \n");
         } else {
-            System.out.println("Passwords do not match. Password change failed.");
+            System.out.println("Passwords do not match. Password change failed. \n");
         }
     }
 
