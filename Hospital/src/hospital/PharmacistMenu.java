@@ -22,10 +22,11 @@ public class PharmacistMenu {
             System.out.println("2. Update Prescription Status");
             System.out.println("3. View Inventory");
             System.out.println("4. Submit Replenishment Request");
-            System.out.println("5. Logout");
+            System.out.println("5. Change Password");
+            System.out.println("6. Logout");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
-            scanner.nextLine();  // Consume newline
+            scanner.nextLine();  
 
             switch (choice) {
                 case 1:
@@ -45,6 +46,9 @@ public class PharmacistMenu {
                     pharmacist.submitReplenishmentRequest(medicineName, quantity, adminInventoryManager);
                     break;
                 case 5:
+                    pharmacist.changePassword(scanner);
+                    break;    
+                case 6:
                     System.out.println("Logging out...");
                     return;
                 default:
