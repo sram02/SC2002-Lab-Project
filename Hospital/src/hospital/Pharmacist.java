@@ -41,6 +41,13 @@ public class Pharmacist extends Staff {
     }
 
     public void submitReplenishmentRequest(String medicineName, int quantity, AdminInventoryManager adminInventoryManager) {
+        // Check if medicine exist in inventory
+        if (inventoryManager.getInventory().getMedicineByName(medicineName) == null) {
+            System.out.println("Invalid medicine. Please try again.\n");
+            return;
+        }
+
+        // If medicine exist, proceed with replenish request
         ReplenishmentRequest request = new ReplenishmentRequest(medicineName, quantity, this);
         inventoryManager.submitReplenishmentRequest(request, adminInventoryManager);
     }
