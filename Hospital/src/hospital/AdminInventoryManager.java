@@ -21,14 +21,14 @@ public class AdminInventoryManager {
         System.out.print("\nReturning to Inventory Management Menu..\n\n");
     }
 
-    // Add a new medicine to inventory
+    // Add new medicine to inventory
     public void addMedicine(String name, int initialStock, int lowStockThreshold) {
         Medicine newMedicine = new Medicine(name, initialStock, lowStockThreshold);
         inventory.addMedicine(newMedicine);
         System.out.println("Medicine added: " + name);
     }
 
-    // Update the stock level of an existing medicine
+    // Update stock level of existing medicine
     public void updateStockLevel(String name, int newStock) {
         Medicine medicine = inventory.getMedicineByName(name);
         if (medicine != null) {
@@ -39,7 +39,7 @@ public class AdminInventoryManager {
         }
     }
 
-    // Update the low stock alert threshold of an existing medicine
+    // Update low stock alert threshold of existing medicine
     public void updateLowStockThreshold(String name, int newThreshold) {
         Medicine medicine = inventory.getMedicineByName(name);
         if (medicine != null) {
@@ -50,7 +50,7 @@ public class AdminInventoryManager {
         }
     }
 
-    // Remove a medicine from inventory
+    // Remove medicine from inventory
     public void removeMedicine(String name) {
         Medicine medicine = inventory.getMedicineByName(name);
         if (medicine != null) {
@@ -68,7 +68,7 @@ public class AdminInventoryManager {
 
     public void addReplenishmentRequest(ReplenishmentRequest request) {
         pendingRequests.add(request);
-        System.out.println("Replenishment request added for: " + request.getMedicineName());
+        
     }
 
     public void approveReplenishmentRequest(ReplenishmentRequest request) {
@@ -80,7 +80,6 @@ public class AdminInventoryManager {
             System.out.println("Medicine not found in inventory.\n");
         }
     }
-
 
     // Remove a specific replenishment request
     public void removeReplenishmentRequest(ReplenishmentRequest request) {
