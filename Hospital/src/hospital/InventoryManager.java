@@ -8,6 +8,10 @@ public class InventoryManager {
     public InventoryManager(Inventory inventory) {
         this.inventory = inventory;
     }
+    
+    public Inventory getInventory() {
+        return inventory;
+    }
 
     public void viewInventory() {
         System.out.println("\nInventory:");
@@ -26,5 +30,6 @@ public class InventoryManager {
     public void submitReplenishmentRequest(ReplenishmentRequest request, AdminInventoryManager adminInventoryManager) {
         adminInventoryManager.addReplenishmentRequest(request);
         System.out.println("Replenishment request submitted for: " + request.getMedicineName());
+        System.out.print("\nReturning to Menu..\n\n");
     }
 }
