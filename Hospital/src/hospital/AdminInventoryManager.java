@@ -11,6 +11,10 @@ public class AdminInventoryManager {
         this.inventory = inventory;
         this.pendingRequests = new ArrayList<>();
     }
+    
+    public Inventory getInventory() {
+        return inventory;
+    }
 
     // View all items in inventory
     public void viewInventory() {
@@ -26,6 +30,7 @@ public class AdminInventoryManager {
         Medicine newMedicine = new Medicine(name, initialStock, lowStockThreshold);
         inventory.addMedicine(newMedicine);
         System.out.println("Medicine added: " + name);
+        System.out.println("\nReturning to Inventory Management Menu..\n");
     }
 
     // Update stock level of existing medicine
@@ -34,6 +39,7 @@ public class AdminInventoryManager {
         if (medicine != null) {
             medicine.setStockLevel(newStock);
             System.out.println("Stock level updated for " + name);
+            System.out.println("\nReturning to Inventory Management Menu..\n");
         } else {
             System.out.println("Medicine not found in inventory.\n");
         }
@@ -45,6 +51,7 @@ public class AdminInventoryManager {
         if (medicine != null) {
             medicine.setLowStockThreshold(newThreshold);
             System.out.println("Low stock alert updated for " + name);
+            System.out.println("\nReturning to Inventory Management Menu..\n");
         } else {
             System.out.println("Medicine not found in inventory.\n");
         }
@@ -56,6 +63,7 @@ public class AdminInventoryManager {
         if (medicine != null) {
             inventory.getMedicines().remove(medicine);
             System.out.println("Medicine removed: " + name);
+            System.out.println("\nReturning to Inventory Management Menu..\n");
         } else {
             System.out.println("Medicine not found in inventory.\n");
         }
