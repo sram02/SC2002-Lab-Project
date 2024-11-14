@@ -36,6 +36,9 @@ public class HospitalManagementSystem {
     public Inventory getInventory() {
         return this.inventory;
     }
+    public List<Patient> getPatients() {
+        return this.patients;
+    }
     
     public void addDoctor(Doctor doctor) {
         doctors.add(doctor);
