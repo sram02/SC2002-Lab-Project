@@ -103,43 +103,78 @@ public class AdministratorMenu {
         System.out.println("Adding New Staff:");
         System.out.print("Enter User ID: ");
         String userID = scanner.nextLine();
+
+        // check if userID exists
+        if (staffManager.getStaffById(userID) != null) {
+            System.out.println("A staff member with this User ID already exists. Please try again.\n");
+            return;
+        }
+
         System.out.print("Enter Name: ");
         String name = scanner.nextLine();
+        
+        // check name
+        if (name.isEmpty() || !name.matches("[a-zA-Z ]+")) {
+            System.out.println("Invalid name. Name must contain only alphabets and should not be empty. Please try again.\n");
+            return;
+        }
+
         System.out.print("Enter Password: ");
         String password = scanner.nextLine();
-        System.out.print("Enter Gender: ");
+
+        System.out.print("Enter Gender (Male/Female): ");
         String gender = scanner.nextLine();
-        System.out.print("Enter Age: ");
-        int age = scanner.nextInt();
-        scanner.nextLine(); 
         
+        // check gender
+        if (!gender.equalsIgnoreCase("Male") && !gender.equalsIgnoreCase("Female")) {
+            System.out.println("Invalid gender. Please enter 'Male' or 'Female'.\n");
+            return;
+        }
+
+        System.out.print("Enter Age: ");
+        int age;
+        
+        try {
+            age = scanner.nextInt();
+            if (age <= 0) {
+                System.out.println("Invalid age. Age must be a positive number. Please try again.\n");
+                scanner.nextLine(); 
+                return;
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input for age. Please enter a valid number.\n");
+            scanner.nextLine(); 
+            return;
+        }
+
+        scanner.nextLine(); 
+
         System.out.print("Enter Role (DOCTOR, PHARMACIST, ADMINISTRATOR): ");
         String roleInput = scanner.nextLine().toUpperCase();
-        
         StaffRole role;
         try {
             role = StaffRole.valueOf(roleInput);
         } catch (IllegalArgumentException e) {
-            System.out.println("Invalid role entered. Please enter a valid role (DOCTOR, PHARMACIST, ADMINISTRATOR).");
+            System.out.println("Invalid role entered. Please enter a valid role (DOCTOR, PHARMACIST, ADMINISTRATOR).\n");
             return;
         }
 
-        // Create staff
+        // Create staff based on role
         Staff newStaff;
         switch (role) {
             case DOCTOR:
                 newStaff = new Doctor(userID, password, name, gender, age);
-                hms.addDoctor((Doctor) newStaff); 
+                hms.addDoctor((Doctor) newStaff);
                 break;
             case PHARMACIST:
                 InventoryManager inventoryManager = new InventoryManager(hms.getInventory());
                 newStaff = new Pharmacist(userID, password, name, gender, age, inventoryManager);
-                hms.addPharmacist((Pharmacist) newStaff); 
+                hms.addPharmacist((Pharmacist) newStaff);
                 break;
             case ADMINISTRATOR:
                 AdminInventoryManager adminInventoryManager = hms.getAdminInventoryManager();
                 newStaff = new Administrator(userID, password, name, gender, age, adminInventoryManager);
-                hms.addAdministrator((Administrator) newStaff); 
+                hms.addAdministrator((Administrator) newStaff);
                 break;
             default:
                 System.out.println("Invalid role. Staff not added.");
@@ -162,14 +197,55 @@ public class AdministratorMenu {
 
         System.out.print("Enter New Name (Leave blank to keep current name): ");
         String name = scanner.nextLine();
+
+        // check name if inputed
+        if (!name.isEmpty() && (!name.matches("[a-zA-Z ]+") || name.trim().isEmpty())) {
+            System.out.println("Invalid name. Name must contain only alphabets and should not be empty. Please try again.\n");
+            return;
+        }
+
         System.out.print("Enter New Password (Leave blank to keep current password): ");
         String password = scanner.nextLine();
+
         System.out.print("Enter Gender (Leave blank to keep current gender): ");
         String gender = scanner.nextLine();
 
-        staffManager.updateStaff(userID, name, password, gender);
+        // check gender if inputed
+        if (!gender.isEmpty() && !gender.equalsIgnoreCase("Male") && !gender.equalsIgnoreCase("Female")) {
+            System.out.println("Invalid gender. Please enter 'Male' or 'Female'.\n");
+            return;
+        }
+
+        System.out.print("Enter New Age (Leave blank to keep current age): ");
+        String ageInput = scanner.nextLine();
+        Integer age = null;
+
+        // check age if inputed
+        if (!ageInput.isEmpty()) {
+            try {
+                age = Integer.parseInt(ageInput);
+                if (age <= 0) {
+                    System.out.println("Invalid age. Age must be a positive number. Please try again.\n");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input for age. Please enter a valid number.\n");
+                return;
+            }
+        }
+
+        // update staff details in staff manager
+        staffManager.updateStaff(userID, name.isEmpty() ? staff.getName() : name,
+                                 password.isEmpty() ? staff.getPassword() : password,
+                                 gender.isEmpty() ? staff.getGender() : gender);
+
+        if (age != null) {
+            staff.setAge(age); 
+        }
+
         System.out.println("Staff updated successfully.\n");
     }
+
 
     private void removeStaff() {
         System.out.print("Enter User ID of staff to remove: ");
@@ -239,7 +315,7 @@ public class AdministratorMenu {
                     System.out.print("Enter new low stock threshold: ");
                     try {
                         int newThreshold = scanner.nextInt();
-                        scanner.nextLine();
+                        scanner.nextLine(); // Consume newline
                         adminInventoryManager.updateLowStockThreshold(thresholdName, newThreshold);
                     } catch (InputMismatchException e) {
                         System.out.println("Invalid input. Please enter a valid number for the low stock threshold.\n");
