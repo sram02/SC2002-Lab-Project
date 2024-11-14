@@ -3,7 +3,8 @@ package hospital;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
+// import java.util.Iterator;
+import java.util.InputMismatchException;
 
 public class AdministratorMenu {
     private Administrator administrator;
@@ -189,7 +190,6 @@ public class AdministratorMenu {
             System.out.println("4. Update Low Stock Threshold");
             System.out.println("5. Remove Medicine");
             System.out.println("6. Return to Main Menu");
-            
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -209,20 +209,42 @@ public class AdministratorMenu {
                     adminInventoryManager.addMedicine(name, stock, threshold);
                     break;
                 case 3:
-                    System.out.print("Enter medicine name: ");
-                    String medName = scanner.nextLine();
-                    System.out.print("Enter new stock level: ");
-                    int newStock = scanner.nextInt();
-                    scanner.nextLine(); 
-                    adminInventoryManager.updateStockLevel(medName, newStock);
-                    break;
+                	 System.out.print("Enter medicine name: ");
+                     String medName = scanner.nextLine();
+                     
+                     if (adminInventoryManager.getInventory().getMedicineByName(medName) == null) {
+                         System.out.println("Invalid medicine. Please try again.\n");
+                         break;
+                     }
+                     
+                     System.out.print("Enter new stock level: ");
+                     try {
+                         int newStock = scanner.nextInt();
+                         scanner.nextLine(); // Consume newline
+                         adminInventoryManager.updateStockLevel(medName, newStock);
+                     } catch (InputMismatchException e) {
+                         System.out.println("Invalid input. Please enter a valid number for stock level.\n");
+                         scanner.nextLine(); // Clear invalid input
+                     }
+                     break;
                 case 4:
-                    System.out.print("Enter medicine name: ");
+                	System.out.print("Enter medicine name: ");
                     String thresholdName = scanner.nextLine();
+                    
+                    if (adminInventoryManager.getInventory().getMedicineByName(thresholdName) == null) {
+                        System.out.println("Invalid medicine. Please try again.\n");
+                        break;
+                    }
+                    
                     System.out.print("Enter new low stock threshold: ");
-                    int newThreshold = scanner.nextInt();
-                    scanner.nextLine(); 
-                    adminInventoryManager.updateLowStockThreshold(thresholdName, newThreshold);
+                    try {
+                        int newThreshold = scanner.nextInt();
+                        scanner.nextLine(); // Consume newline
+                        adminInventoryManager.updateLowStockThreshold(thresholdName, newThreshold);
+                    } catch (InputMismatchException e) {
+                        System.out.println("Invalid input. Please enter a valid number for the low stock threshold.\n");
+                        scanner.nextLine(); 
+                    }
                     break;
                 case 5:
                     System.out.print("Enter medicine name to remove: ");
