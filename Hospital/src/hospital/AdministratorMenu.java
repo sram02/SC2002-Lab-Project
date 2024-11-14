@@ -109,6 +109,13 @@ public class AdministratorMenu {
             System.out.println("A staff member with this User ID already exists. Please try again.\n");
             return;
         }
+        
+        for (Patient patient : hms.getPatients()) {
+            if (patient.getUserID().equals(userID)) {
+                System.out.println("A patient with this User ID already exists. Please try again.\n");
+                return;
+            }
+        }
 
         System.out.print("Enter Name: ");
         String name = scanner.nextLine();
