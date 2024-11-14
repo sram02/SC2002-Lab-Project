@@ -1,32 +1,170 @@
 package hospital;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+import hospital.Appointment.AppointmentStatus;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class DAppointmentManager {
-    private Calendar calendar;
+    private ArrayList<Appointment> calendar;
+    private ArrayList<Appointment> pending;
+    private ArrayList<Appointment> accepted; //for those that the doctor has accepted
+    private ArrayList<Appointment> declined; //for those that the doctor has declined
+    private ArrayList<Appointment> completed; //for those that the doctor has completed. It should include AppointmentOutcome
 
-    // No-argument constructor
+    Scanner scanner = new Scanner(System.in);
+
     public DAppointmentManager() {
-        this.calendar = Calendar.getInstance(); // Initializes with the current date/time
+        this.calendar = new ArrayList<>();
+        this.pending = new ArrayList<>();
+        this.accepted = new ArrayList<>();
+        this.declined = new ArrayList<>();
+        this.completed = new ArrayList<>();
     }
 
-    // Constructor that takes a Calendar instance
-    public DAppointmentManager(Calendar calendar) {
-        this.calendar = calendar;
-    }
+    // Method to schedule an appointment
+    public void schedule(String doctorID) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;  // Declare the date variable outside the try block
 
-    public void setAvailability(Calendar newAvailability) {
-        this.calendar = newAvailability;
-        System.out.println("Doctor's availability updated.");
-    }
+        while (date == null) {
+            System.out.println("Enter date (yyyy-MM-dd): ");
+            String Available_date = scanner.nextLine();  // Corrected variable name
 
-    public void acceptAppointment(Appointment appointment) {
-        appointment.setStatus(AppointmentStatus.CONFIRMED);
-        System.out.println("Appointment accepted.");
-    }
+            try {
+                // Parse the string into a Date object
+                date = dateFormat.parse(Available_date);  // Assign value to date
+                System.out.println("Parsed Date: " + date);
 
-    public void declineAppointment(Appointment appointment) {
-        appointment.setStatus(AppointmentStatus.CANCELLED);
-        System.out.println("Appointment declined.");
+            } catch (ParseException e) {
+                System.out.println("Invalid date format! Please try again.");
+            }
+        }
+        
+        // Now that date is valid, ask for the time
+        System.out.println("Enter time (e.g., 9:00 AM, 1:00 PM, 4:00 PM): ");
+        String Available_Time = scanner.nextLine();  // Use nextLine() to get full input including spaces
+        
+        // Create the appointment using the parsed date
+        Appointment appointment = new Appointment("Empty", doctorID, date, Available_Time);
+        calendar.add(appointment);
+        System.out.println("Appointment scheduled in your calendar.");
+    }
+    
+    // Method to schedule appointments for multiple days
+    /*
+    public void multischedule(String doctorID, int days) {
+        // Assume the last known date is today's date
+        Calendar calendar = Calendar.getInstance();
+        
+        // Schedule appointments for the given number of days
+        for (int i = 0; i < days; i++) {
+            // For each day, schedule 3 appointments (9am, 1pm, and 4pm)
+            for (String time : new String[]{"9:00 AM", "1:00 PM", "4:00 PM"}) {
+                Appointment appointment = new Appointment("empty", doctorID, calendar.getTime(), time);
+                this.schedule(appointment);
+            }
+            // Move to the next day
+            calendar.add(Calendar.DAY_OF_MONTH, 1); 
+        }
+    }
+    
+    public void delete_schedule(Date date, String time) {
+    	
+    }
+    */
+    
+    public void View_Upcoming_Appointments() {
+    	int index = 0;
+    	
+    	for (Appointment appointment : pending) {
+    		System.out.println(index + ". ");
+    		appointment.toString();
+    		index++;
+    	}
+    }
+    
+    public void Accept_Appointments() {
+    	String input;
+    	
+    	int index = 0;
+    	
+    	System.out.println("Enter which appointment to Accept/Decline:");
+    	index = scanner.nextInt();
+    	Appointment removedItem = pending.remove(index);
+    	
+    	while (true) {
+    		System.out.println("Would you like to accept that appointment request?");
+        	input = scanner.nextLine().trim();
+        	
+    		if (input.equalsIgnoreCase("Y")) {
+                System.out.println("You entered Yes.");
+                accepted.add(removedItem);                           
+                break;
+                
+            } else if (input.equalsIgnoreCase("N")) {
+                System.out.println("You entered No.");
+                declined.add(removedItem);                              
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter Y or N.");
+            }
+    	}
+    }
+    
+    public void Fill_Completed_Appointment() {
+    	int index = 0, Med_quant;
+    	String diagnosis, treatment, Med_Name; 
+    	
+    	
+    	for (Appointment appointment : accepted) {
+    		System.out.println(index + ". ");
+    		appointment.toString();
+    		index++;
+    	}
+    	
+    	System.out.println("Enter which appointment have you completed:");
+    	index = scanner.nextInt();
+    	Appointment removedItem = pending.remove(index);
+    	
+    	removedItem.setStatus(AppointmentStatus.COMPLETED);
+    	
+    	System.out.println("Enter Diagnosis: ");
+    	diagnosis = scanner.nextLine();
+    	
+    	System.out.println("Enter treatment: ");
+    	treatment = scanner.nextLine();
+    	
+    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false); 
+        
+        Date date = null;
+        while (date == null) { // Continue until a valid date is entered
+            System.out.print("Enter a date (yyyy-MM-dd): ");
+            String dateString = scanner.nextLine();
+
+            try {
+                // Try to parse the input string into a Date object
+                date = dateFormat.parse(dateString);
+                System.out.println("Parsed Date: " + date);
+            } catch (ParseException e) {
+                System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+            }
+        }
+        
+        System.out.println("Enter the prescribed medicine name: ");
+        Med_Name = scanner.nextLine();
+        
+        System.out.println("Enter the quantity of medicine: ");
+        Med_quant = scanner.nextInt();
+        
+        removedItem.create_AOR(diagnosis, treatment);       
+        
+        removedItem.get_AOR().set_prescription(Med_Name, Med_quant);
+        
+        this.completed.add(removedItem);
     }
 }
