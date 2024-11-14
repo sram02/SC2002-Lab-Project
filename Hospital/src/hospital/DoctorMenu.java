@@ -1,52 +1,27 @@
-package hospital;
+public void schedule(String doctorID) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;  // Declare the date variable outside the try block
 
-import java.util.Scanner;
+        while (date == null) {
+            System.out.println("Enter date (yyyy-MM-dd): ");
+            String Available_date = scanner.nextLine();  // Corrected variable name
 
-public class DoctorMenu {
-    private Doctor doctor;
+            try {
+                // Parse the string into a Date object
+                date = dateFormat.parse(Available_date);  // Assign value to date
+                System.out.println("Parsed Date: " + date);
 
-    public DoctorMenu(Doctor doctor) {
-        this.doctor = doctor;
-    }
-
-    public void display() {
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            System.out.println("Welcome, Dr. " + doctor.getName() + "! This is the Doctor Menu.");
-            System.out.println("1. View Patient Records");
-            System.out.println("2. Update Patient Records");
-            System.out.println("3. View Schedule");
-            System.out.println("4. Set Availability");
-            System.out.println("5. Logout");
-            System.out.print("Enter your choice: ");
-
-            int choice = scanner.nextInt();
-            scanner.nextLine();  // Clear newline
-
-            switch (choice) {
-                case 1:
-                    // Call method to view patient records
-                    System.out.println("Viewing patient records...");
-                    break;
-                case 2:
-                    // Call method to update patient records
-                    System.out.println("Updating patient records...");
-                    break;
-                case 3:
-                    // Call method to view schedule
-                    System.out.println("Viewing schedule...");
-                    break;
-                case 4:
-                    // Call method to set availability
-                    System.out.println("Setting availability...");
-                    break;
-                case 5:
-                    System.out.println("Logging out...");
-                    return;  // Exit the menu and go back to the main login screen
-                default:
-                    System.out.println("Invalid choice. Please try again.");
+            } catch (ParseException e) {
+                System.out.println("Invalid date format! Please try again.");
             }
-            System.out.println(); // Add space for readability
         }
+        
+        // Now that date is valid, ask for the time
+        System.out.println("Enter time (e.g., 9:00 AM, 1:00 PM, 4:00 PM): ");
+        String Available_Time = scanner.nextLine();  // Use nextLine() to get full input including spaces
+        
+        // Create the appointment using the parsed date
+        Appointment appointment = new Appointment("Empty", doctorID, date, Available_Time);
+        calendar.add(appointment);
+        System.out.println("Appointment scheduled in your calendar.");
     }
-}
