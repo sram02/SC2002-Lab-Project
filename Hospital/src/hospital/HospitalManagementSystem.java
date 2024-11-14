@@ -13,16 +13,16 @@ public class HospitalManagementSystem {
     private List<Administrator> administrators;
     private Inventory inventory;  
     private StaffManager staffManager;
-    private AdminInventoryManager adminInventoryManager; // Declare adminInventoryManager
+    private AdminInventoryManager adminInventoryManager; 
 
     public HospitalManagementSystem() {
         this.patients = new ArrayList<>();
         this.doctors = new ArrayList<>();
         this.pharmacists = new ArrayList<>();
         this.administrators = new ArrayList<>();
-        this.inventory = new Inventory();  // Initialize inventory
-        this.staffManager = new StaffManager();
-        this.adminInventoryManager = new AdminInventoryManager(inventory);  // Initialize adminInventoryManager
+        this.inventory = new Inventory("Medicine_List.csv"); 
+        this.staffManager = new StaffManager("Staff_List.csv");
+        this.adminInventoryManager = new AdminInventoryManager(inventory);  
     }
 
     public StaffManager getStaffManager() {
@@ -63,7 +63,7 @@ public class HospitalManagementSystem {
     private void loadPatientsFromCSV(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
-            line = br.readLine(); // Skip header
+            line = br.readLine(); 
 
             RecordManager recordManager = new RecordManager();
             PAppointmentManager patientAppointmentManager = new PAppointmentManager();
@@ -92,16 +92,16 @@ public class HospitalManagementSystem {
     private void loadStaffFromCSV(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
-            line = br.readLine(); // Skip header
+            line = br.readLine();
 
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
-                if (values.length >= 5) {  // Ensure CSV includes age as the fifth value
+                if (values.length >= 5) {  
                     String userID = values[0].trim();
                     String name = values[1].trim();
                     String role = values[2].trim();
                     String gender = values[3].trim();
-                    int age = Integer.parseInt(values[4].trim()); // Parse age
+                    int age = Integer.parseInt(values[4].trim()); 
 
                     String password = "password"; // Default password
 
@@ -134,9 +134,11 @@ public class HospitalManagementSystem {
     }
 
     private void loadMedicinesFromCSV(String filePath) {
+        inventory.getMedicines().clear();
+        
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
-            line = br.readLine(); // Skip header
+            line = br.readLine(); 
 
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
