@@ -14,5 +14,10 @@ public class PrescribedMedication {
     public String getName() { return name; }
     public int getQuantity() { return quantity; }
     public boolean isDispensedStatus() { return dispensedStatus; }
+    
+    public void Dispense() {
+    	this.dispensedStatus = true;
+    }
+    
     public void setDispensedStatus(boolean status) { this.dispensedStatus = status; }
 }
