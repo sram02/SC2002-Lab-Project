@@ -220,11 +220,11 @@ public class AdministratorMenu {
                      System.out.print("Enter new stock level: ");
                      try {
                          int newStock = scanner.nextInt();
-                         scanner.nextLine(); // Consume newline
+                         scanner.nextLine(); 
                          adminInventoryManager.updateStockLevel(medName, newStock);
                      } catch (InputMismatchException e) {
                          System.out.println("Invalid input. Please enter a valid number for stock level.\n");
-                         scanner.nextLine(); // Clear invalid input
+                         scanner.nextLine(); 
                      }
                      break;
                 case 4:
@@ -239,7 +239,7 @@ public class AdministratorMenu {
                     System.out.print("Enter new low stock threshold: ");
                     try {
                         int newThreshold = scanner.nextInt();
-                        scanner.nextLine(); // Consume newline
+                        scanner.nextLine();
                         adminInventoryManager.updateLowStockThreshold(thresholdName, newThreshold);
                     } catch (InputMismatchException e) {
                         System.out.println("Invalid input. Please enter a valid number for the low stock threshold.\n");
