@@ -1,15 +1,29 @@
 package hospital;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+
 public class DRecordManager {
+	
+	Scanner scanner = new Scanner(System.in);
+	
+	private ArrayList<Patient> patients; //for upcoming appointment classes which are set as
+	
+	//constructor
     public DRecordManager() {
-        // Initialize any necessary properties
+    	this.patients = new ArrayList<>();
     }
 
-    public void viewPatientRecord() {
-        System.out.println("Viewing patient record for doctor.");
+    public void viewPatientMedicalRecord() {
+    	int index = 0;
+        for (Patient patient : patients) {
+        	System.out.println("Patient name: " + patient.getName());
+        	System.out.println("Patient ID: " + patient.getUserID());
+        	       	
+        }
     }
-
-    public void updateDiagnosis(PatientMedicalRecord record) {
-        System.out.println("Updating diagnosis in patient record.");
+    
+    public void UpdatePatientRecord() {
+    	//unsure portion
     }
 }
