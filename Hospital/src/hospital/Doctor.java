@@ -1,22 +1,24 @@
 package hospital;
 
-import java.util.Calendar;
-
 public class Doctor extends Staff {
+	
+	//attributes
     private DRecordManager recordManager;
     private DAppointmentManager appointmentManager;
-
+    
+    
+    //constructor
     public Doctor(String userID, String password, String name, String gender, int age) {
         super(userID, password, name, gender, age, StaffRole.DOCTOR); // Pass StaffRole.DOCTOR
         this.recordManager = new DRecordManager();
         this.appointmentManager = new DAppointmentManager();
     }
-
-    public void viewPatientRecords() {
-        recordManager.viewPatientRecord();
+    
+    public DRecordManager get_RM() {
+    	return recordManager;
     }
-
-    public void setAvailability(Calendar calendar) {
-        appointmentManager.setAvailability(calendar);
-    }
+    
+    public DAppointmentManager get_AM() {
+    	return appointmentManager;
+    }   
 }
