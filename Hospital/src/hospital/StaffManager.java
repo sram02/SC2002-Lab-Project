@@ -1,13 +1,17 @@
 package hospital;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StaffManager {
     private List<Staff> staffList;
+    private String staffCsvFilePath;
 
-    public StaffManager() {
+    public StaffManager(String staffCsvFilePath) {
         this.staffList = new ArrayList<>();
+        this.staffCsvFilePath = staffCsvFilePath;
     }
 
     // Method to get all staff
@@ -50,6 +54,7 @@ public class StaffManager {
     // Other methods for adding, updating, and removing staff
     public void addStaff(Staff staff) {
         staffList.add(staff);
+        saveToFile();
     }
 
     public Staff getStaffById(String userID) {
@@ -73,6 +78,7 @@ public class StaffManager {
             if (!gender.isEmpty()) {
                 staff.setGender(gender);
             }
+            saveToFile();
         }
     }
 
@@ -80,8 +86,22 @@ public class StaffManager {
         Staff staff = getStaffById(userID);
         if (staff != null) {
             staffList.remove(staff);
+            saveToFile();
             return true;
         }
         return false;
+    }
+    
+    private void saveToFile() {
+        try (FileWriter writer = new FileWriter(staffCsvFilePath)) {
+            writer.write("UserID,Name,Role,Gender,Age\n");
+            for (Staff staff : staffList) {
+                String roleFormatted = staff.getStaffRole().name().charAt(0) + staff.getStaffRole().name().substring(1).toLowerCase();
+                
+                writer.write(staff.getUserID() + "," + staff.getName() + "," + roleFormatted + "," + staff.getGender() + "," + staff.getAge() + "\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Error saving staff to file: " + e.getMessage());
+        }
     }
 }
