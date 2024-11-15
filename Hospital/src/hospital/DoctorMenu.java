@@ -19,8 +19,7 @@ public class DoctorMenu {
     	Scanner scanner = new Scanner(System.in);
        
         while (true) {
-            System.out.println("Welcome, Dr. " + doctor.getName() + "! This is the Doctor Menu.");
-            System.out.println("0. Change password"); //ram's edit
+            System.out.println("Welcome, Dr. " + doctor.getName() + "! This is the Doctor Menu.");          
             System.out.println("1. View Patient Medical Records under my care");
             System.out.println("2. Update Patient Medical Records under my care");
             System.out.println("3. View my personal schedule");
@@ -28,19 +27,14 @@ public class DoctorMenu {
             System.out.println("5. View list of upcoming appointments");
             System.out.println("6. Accept/Decline appointments");
             System.out.println("7. Fill up completed appointment");
-            System.out.println("8. Logout");
+            System.out.println("8. Change password"); 
+            System.out.println("9. Logout \n");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine();  // Clear newline
+            scanner.nextLine();  
 
-            switch (choice) {
-            	case 0:
-            		System.out.println("Changing password...");
-            		System.out.println("Enter new password: ");
-            		String password = scanner.nextLine();
-            		this.doctor.setPassword(password);
-            		break;
+            switch (choice) {           	
                 case 1:
                     // View blood type, past diagnoses, treatments.
                     System.out.println("Viewing patient records...");
@@ -51,7 +45,7 @@ public class DoctorMenu {
                     System.out.println("Updating patient records...");
                     this.doctor.get_DRM().UpdatePatientRecord();
                     break;
-                    
+                  
                 case 3: 
                 	System.out.println("Viewing Availability...");
                 	this.doctor.get_DAM().View_Schedule();
@@ -74,8 +68,10 @@ public class DoctorMenu {
                 	this.doctor.get_DAM().Fill_Completed_Appointment();
                 	break;
                 case 8:
+                	doctor.changePassword(scanner);
+                    break;
+                case 9:
                     System.out.println("Logging out...");
-                    scanner.close();
                     return;  // Exit the menu and go back to the main login screen
                 default:
                     System.out.println("Invalid choice. Please try again.");
