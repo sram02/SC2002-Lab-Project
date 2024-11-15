@@ -54,33 +54,10 @@ public class DAppointmentManager {
         System.out.println("Appointment scheduled in your calendar.");
     }
     
-    // Method to schedule appointments for multiple days
-    /*
-    public void multischedule(String doctorID, int days) {
-        // Assume the last known date is today's date
-        Calendar calendar = Calendar.getInstance();
-        
-        // Schedule appointments for the given number of days
-        for (int i = 0; i < days; i++) {
-            // For each day, schedule 3 appointments (9am, 1pm, and 4pm)
-            for (String time : new String[]{"9:00 AM", "1:00 PM", "4:00 PM"}) {
-                Appointment appointment = new Appointment("empty", doctorID, calendar.getTime(), time);
-                this.schedule(appointment);
-            }
-            // Move to the next day
-            calendar.add(Calendar.DAY_OF_MONTH, 1); 
-        }
-    }
-    
-    public void delete_schedule(Date date, String time) {
-    	
-    }
-    */
-    
     public void View_Upcoming_Appointments() {
     	int index = 0;
     	
-    	for (Appointment appointment : pending) {
+    	for (Appointment appointment : accepted) {
     		System.out.println(index + ". ");
     		appointment.toString();
     		index++;
@@ -91,6 +68,11 @@ public class DAppointmentManager {
     	String input;
     	
     	int index = 0;
+    	for (Appointment appointment : pending) {
+    		System.out.println(index + ". ");
+    		appointment.toString();
+    		index++;
+    	}
     	
     	System.out.println("Enter which appointment to Accept/Decline:");
     	index = scanner.nextInt();
@@ -116,19 +98,14 @@ public class DAppointmentManager {
     }
     
     public void Fill_Completed_Appointment() {
-    	int index = 0, Med_quant;
-    	String diagnosis, treatment, Med_Name; 
+    	int index, Med_quant;
+    	String diagnosis, treatment, Med_Name;
     	
-    	
-    	for (Appointment appointment : accepted) {
-    		System.out.println(index + ". ");
-    		appointment.toString();
-    		index++;
-    	}
+    	this.View_Upcoming_Appointments();
     	
     	System.out.println("Enter which appointment have you completed:");
     	index = scanner.nextInt();
-    	Appointment removedItem = pending.remove(index);
+    	Appointment removedItem = accepted.remove(index);
     	
     	removedItem.setStatus(AppointmentStatus.COMPLETED);
     	
@@ -137,23 +114,6 @@ public class DAppointmentManager {
     	
     	System.out.println("Enter treatment: ");
     	treatment = scanner.nextLine();
-    	
-    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setLenient(false); 
-        
-        Date date = null;
-        while (date == null) { // Continue until a valid date is entered
-            System.out.print("Enter a date (yyyy-MM-dd): ");
-            String dateString = scanner.nextLine();
-
-            try {
-                // Try to parse the input string into a Date object
-                date = dateFormat.parse(dateString);
-                System.out.println("Parsed Date: " + date);
-            } catch (ParseException e) {
-                System.out.println("Invalid date format. Please use yyyy-MM-dd.");
-            }
-        }
         
         System.out.println("Enter the prescribed medicine name: ");
         Med_Name = scanner.nextLine();
