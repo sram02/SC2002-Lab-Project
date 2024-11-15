@@ -30,6 +30,10 @@ public class Appointment {
     public String getPatientID() {
         return patientID;
     }
+    
+    public void setPatientID(String ID) {
+    	this.patientID = ID;
+    }
 
     public String getDoctorID() {
         return doctorID;
@@ -57,6 +61,10 @@ public class Appointment {
     
     public void complete() {
     	this.status = AppointmentStatus.COMPLETED;
+    }
+    
+    public void revert() {
+    	this.status = AppointmentStatus.PENDING;
     }
 
     @Override
