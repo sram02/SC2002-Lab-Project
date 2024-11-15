@@ -88,7 +88,8 @@ public class DAppointmentManager {
     	int index = 0;
     	
     	for (Appointment appointment: calendar) {
-    		System.out.println(index + ". " + appointment.toString());
+    		System.out.println(index + ". ");
+    		appointment.toString();
     		index++;
     	}
     }
