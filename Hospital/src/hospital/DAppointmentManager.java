@@ -27,6 +27,10 @@ public class DAppointmentManager {
     public ArrayList<Appointment> get_calendar(){
     	return this.calendar;
     }
+    
+    public ArrayList<Appointment> get_pending(){
+    	return this.pending;
+    }
 
     // Method to schedule an appointment
     public void schedule(String doctorID) {
