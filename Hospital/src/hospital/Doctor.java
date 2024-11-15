@@ -14,11 +14,11 @@ public class Doctor extends Staff {
         this.appointmentManager = new DAppointmentManager();
     }
     
-    public DRecordManager get_RM() {
+    public DRecordManager get_DRM() {
     	return recordManager;
     }
     
-    public DAppointmentManager get_AM() {
+    public DAppointmentManager get_DAM() {
     	return appointmentManager;
     }   
 }
