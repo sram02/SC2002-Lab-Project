@@ -83,6 +83,15 @@ public class DAppointmentManager {
         calendar.add(appointment);
         System.out.println("Appointment scheduled in your calendar.");
     }
+    
+    public void View_Schedule() { //view empty slots available
+    	int index = 0;
+    	
+    	for (Appointment appointment: calendar) {
+    		System.out.println(index + ". " + appointment.toString());
+    		index++;
+    	}
+    }
 
     public void View_Upcoming_Appointments() {
         int index = 0;
