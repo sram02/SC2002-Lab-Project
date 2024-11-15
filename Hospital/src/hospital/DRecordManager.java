@@ -107,6 +107,6 @@ public class DRecordManager {
                     System.out.println("Invalid input. Please enter Y or N.");
                 }
             }
-        } 
+        } // Scanner is automatically closed here
     }
 }
