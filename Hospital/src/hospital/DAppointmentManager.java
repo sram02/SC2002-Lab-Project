@@ -24,6 +24,7 @@ public class DAppointmentManager {
         this.scanner = new Scanner(System.in); // Initialize scanner here
     }
     
+    //for patient's edits
     public ArrayList<Appointment> get_calendar(){
     	return this.calendar;
     }
@@ -31,6 +32,29 @@ public class DAppointmentManager {
     public ArrayList<Appointment> get_pending(){
     	return this.pending;
     }
+    
+    public void cancel_APT(String PID, Date date, String time) {
+    	Appointment removedItem;
+    	int index = 0;
+    	for (Appointment appointment : accepted) {
+            
+    		if (appointment.getPatientID() == PID && appointment.getDate() == date && appointment.getTime() == time) {
+    			//remove the item from the accepted list.
+    			removedItem = accepted.remove(index);
+    			break;
+    		}
+    		index++;
+        }
+    	
+    	//set status to pending
+    	removedItem.revert();
+    
+    	//delete ID.
+    	removedItem.setPatientID("Empty");
+    	
+    	calendar.add(removedItem);
+    }
+    //end of patient's helper functions
 
     // Method to schedule an appointment
     public void schedule(String doctorID) {
