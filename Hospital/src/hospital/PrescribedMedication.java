@@ -18,6 +18,4 @@ public class PrescribedMedication {
     public void Dispense() {
     	this.dispensedStatus = true;
     }
-    
-    public void setDispensedStatus(boolean status) { this.dispensedStatus = status; }
 }
