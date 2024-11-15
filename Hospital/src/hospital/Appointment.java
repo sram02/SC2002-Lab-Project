@@ -1,3 +1,4 @@
+
 package hospital;
 
 import java.util.Date;
@@ -46,14 +47,23 @@ public class Appointment {
     	return this.status;
     }
     
-    public void setStatus(AppointmentStatus status) {
-    	this.status = status;
+    public void cancel() {
+    	this.status = AppointmentStatus.CANCELLED;
+    }
+    
+    public void accept() {
+    	this.status = AppointmentStatus.CONFIRMED;
+    }
+    
+    public void complete() {
+    	this.status = AppointmentStatus.COMPLETED;
     }
 
     @Override
-    public void toString() {
+    public String toString() {
         System.out.println("Appointment with Doctor ID: " + doctorID + ", Date: " + date + ", Time: " + time);
         System.out.println("Patient ID: " + patientID);
+        return "\n";
     }
     
     public void create_AOR(String diagnosis, String treatment) {
