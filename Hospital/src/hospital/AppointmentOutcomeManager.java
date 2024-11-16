@@ -63,7 +63,7 @@ public class AppointmentOutcomeManager {
         String medname = record.get_PM().getName();
         int quantity = record.get_PM().getQuantity();
         if (PIM.takeMedicine(medname, quantity)) {
-            record.get_PM().Dispense();
+            record.get_PM().dispense();
         }
     }
 }
