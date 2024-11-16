@@ -36,6 +36,10 @@ public class DAppointmentManager {
     public ArrayList<Appointment> get_pending() {
         return this.pending;
     }
+    
+    public ArrayList<Appointment> get_declined(){
+    	return this.declined;
+    }
 
     public String cancel_APT(String PID, Date date, String time) {
         ListIterator<Appointment> iterator = accepted.listIterator();
