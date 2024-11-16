@@ -1,20 +1,12 @@
 package hospital;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Scanner;
 
 public class PatientMenu {
     private Patient patient;
-    private PAppointmentManager patientAppointmentManager; // Reference to PAppointmentManager
-    private DAppointmentManager doctorAppointmentManager; // Reference to DAppointmentManager
 
-    public PatientMenu(Patient patient, PAppointmentManager patientAppointmentManager, DAppointmentManager doctorAppointmentManager) {
+    public PatientMenu(Patient patient) {
         this.patient = patient;
-        this.patientAppointmentManager = patientAppointmentManager;
-        this.doctorAppointmentManager = doctorAppointmentManager;
     }
 
     public void display() {
@@ -24,75 +16,71 @@ public class PatientMenu {
         System.out.println("Welcome, " + patient.getName() + "! This is the Patient Menu.");
         
         while (isRunning) {
+            // Display the menu
             System.out.println("1. View Medical Record");
-            System.out.println("2. Schedule an Appointment");
-            System.out.println("3. View Upcoming Appointments");
-            System.out.println("4. Reschedule Appointment");
-            System.out.println("5. Cancel Appointment");
-            System.out.println("6. Change Password");
-            System.out.println("7. Logout");
+            System.out.println("2. Update non-medical personal information");
+            System.out.println("3. View available doctor slots");
+            System.out.println("4. Schedule an Appointment");
+            System.out.println("5. Reschedule Appointment");
+            System.out.println("6. Cancel Appointment");
+            System.out.println("7. View status of scheduled appointments");
+            System.out.println("8. View Appointment Outcome Records");
+            System.out.println("9. Logout");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();  // Consume newline
 
             switch (choice) {
                 case 1:
                     // View Medical Record
-                    patient.viewMedicalRecord();
+                    patient.toString();
+                    patient.get_RM().view_diagoses_treatments();
                     break;
                 case 2:
-                    // Schedule an Appointment
-                    System.out.println("Scheduling an appointment...");
-                    System.out.print("Enter the doctor ID to schedule with: ");
-                    String doctorID = scanner.nextLine();
-                    patientAppointmentManager.schedule(patient.getUserID());
+                    // Update non-medical personal information (except blood type)
+                    System.out.println("Updating non-medical personal information...");
+                    patient.updatePersonalInfo();
                     break;
                 case 3:
-                    // View Upcoming Appointments
-                    System.out.println("Viewing your upcoming appointments...");
-                    patientAppointmentManager.viewAppointments();
+                    // View Available Doctor Slots
+                    System.out.println("Viewing available doctor slots...");
+                    patient.viewDoctorSlots();
                     break;
                 case 4:
-                    // Reschedule Appointment
-                    System.out.println("Rescheduling an appointment...");
-                    System.out.print("Enter the doctor ID of the appointment: ");
-                    doctorID = scanner.nextLine();
-                    System.out.print("Enter the current appointment date (yyyy-MM-dd): ");
-                    LocalDate currentDate = LocalDate.parse(scanner.nextLine());
-                    System.out.print("Enter the current appointment time (HH:MM): ");
-                    LocalTime currentTime = LocalTime.parse(scanner.nextLine());
-                    System.out.println("Selecting a new appointment slot...");
-                    patientAppointmentManager.cancel(patient.getUserID(), getDate(), getTime());
-                    patientAppointmentManager.schedule(patient.getUserID());
+                    // Schedule an Appointment
+                    System.out.println("Scheduling an appointment...");
+                    patient.get_PAM().schedule(patient.getUserID());
                     break;
                 case 5:
-                    // Cancel Appointment
-                    System.out.println("Cancelling an appointment...");
-                    System.out.print("Enter the doctor ID of the appointment: ");
-                    doctorID = scanner.nextLine();
-                    System.out.print("Enter the appointment date (yyyy-MM-dd): ");
-                    LocalDate cancelDate = LocalDate.parse(scanner.nextLine());
-                    System.out.print("Enter the appointment time (HH:MM): ");
-                    LocalTime cancelTime = LocalTime.parse(scanner.nextLine());
-                    patientAppointmentManager.cancel(patient.getUserID(), getDate(), getTime());
+                    // Reschedule Appointment
+                    System.out.println("Rescheduling an appointment...");
+                    patient.rescheduleAppointment();
                     break;
                 case 6:
-                    // Change Password
-                    patient.changePassword(scanner);
-
+                    // Cancel Appointment
+                    System.out.println("Cancelling an appointment...");
+                    patient.cancelAppointment();
                     break;
                 case 7:
+                    // View Status of Scheduled Appointments
+                    System.out.println("Viewing status of scheduled appointments...");
+                    patient.get_PAM().viewAppointments(patient.get_RM());
+                    break;
+                case 8:
+                    // View Appointment Outcome Records
+                    System.out.println("Viewing appointment outcome records...");
+                    patient.get_PAM().viewAppointmentOutcomes(patient.get_RM());
+                    break;
+                case 9:
                     // Logout
                     System.out.println("Logging out...");
-                    isRunning = false;
+                    isRunning = false;  // Exit the loop to go back to the main login prompt
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
-            System.out.println(); // Print a blank line for spacing
+            System.out.println();  // Print a blank line for spacing
         }
     }
 }
-
-                    
