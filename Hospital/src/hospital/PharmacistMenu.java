@@ -1,3 +1,4 @@
+
 package hospital;
 
 import java.util.Scanner;
@@ -31,10 +32,13 @@ public class PharmacistMenu {
 
             switch (choice) {
                 case 1:
-                    // View Appointment Outcome Record logic
+                    System.out.println("Viewing Appointment Outcome Records to be fulfilled...");
+                    pharmacist.getAOM().viewAORs();
                     break;
                 case 2:
                     // Update Prescription Status logic
+                	System.out.println("Updating prescription status...");
+                	pharmacist.getAOM().prescribe(scanner, inventoryManager);
                     break;
                 case 3:
                     pharmacist.viewInventory();
