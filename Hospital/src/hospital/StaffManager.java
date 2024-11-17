@@ -6,12 +6,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StaffManager {
-    private List<Staff> staffList;
+    private static List<Staff> staffList = new ArrayList<>(); // Initialize the list
     private String staffCsvFilePath;
 
-    public StaffManager(String staffCsvFilePath) {
-        this.staffList = new ArrayList<>();
+    // Singleton instance
+    private static StaffManager instance;
+
+    // Private constructor to prevent instantiation
+    private StaffManager(String staffCsvFilePath) {
         this.staffCsvFilePath = staffCsvFilePath;
+    }
+
+    // Public static method to get the instance of the class
+    public static StaffManager getInstance(String staffCsvFilePath) {
+        if (instance == null) {
+            instance = new StaffManager(staffCsvFilePath);
+        }
+        return instance;
     }
 
     // Method to get all staff
@@ -25,20 +36,21 @@ public class StaffManager {
             System.out.println("No staff available.");
         } else {
             for (Staff staff : staffList) {
-            	 System.out.println("Staff ID: " + staff.getUserID() +
-                         ", Name: " + staff.getName() +
-                         ", Role: " + staff.getStaffRole().name() +
-                         ", Gender: " + staff.getGender() +
-                         ", Age: " + staff.getAge());
+                System.out.println("Staff ID: " + staff.getUserID() +
+                        ", Name: " + staff.getName() +
+                        ", Role: " + staff.getStaffRole().name() +
+                        ", Gender: " + staff.getGender() +
+                        ", Age: " + staff.getAge());
             }
         }
     }
-    
+
+    // View staff by role
     public void viewStaffByRole(StaffRole role) {
         boolean found = false;
         for (Staff staff : staffList) {
             if (staff.getStaffRole() == role) { // Use getStaffRole() to access StaffRole
-            	System.out.println("Staff ID: " + staff.getUserID() +
+                System.out.println("Staff ID: " + staff.getUserID() +
                         ", Name: " + staff.getName() +
                         ", Role: " + staff.getStaffRole().name() +
                         ", Gender: " + staff.getGender() +
@@ -91,13 +103,13 @@ public class StaffManager {
         }
         return false;
     }
-    
+
+    // Method to save staff list to file
     private void saveToFile() {
         try (FileWriter writer = new FileWriter(staffCsvFilePath)) {
             writer.write("UserID,Name,Role,Gender,Age\n");
             for (Staff staff : staffList) {
                 String roleFormatted = staff.getStaffRole().name().charAt(0) + staff.getStaffRole().name().substring(1).toLowerCase();
-                
                 writer.write(staff.getUserID() + "," + staff.getName() + "," + roleFormatted + "," + staff.getGender() + "," + staff.getAge() + "\n");
             }
         } catch (IOException e) {
