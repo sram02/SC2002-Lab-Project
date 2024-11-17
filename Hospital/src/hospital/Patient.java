@@ -1,48 +1,38 @@
 package hospital;
 
+import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
 public class Patient extends User {
-    private String dateOfBirth;
+    private String dateOfBirth; // Updated to Date type
     private String phoneNumber;
     private String email;
     private String bloodType;
     private RecordManager recordManager;
     private PAppointmentManager appointmentManager;
 
-    public Patient(String userID, String password, String name, String gender, 
-                   String dateOfBirth, String phoneNumber, String email, 
-                   String bloodType, RecordManager recordManager, 
-                   PAppointmentManager appointmentManager) {
+    public Patient(String userID, String password, String name, String gender,
+                   String dateOfBirth, String phoneNumber, String email,
+                   String bloodType) {
         super(userID, password, name, gender, UserRole.PATIENT);
         this.dateOfBirth = dateOfBirth;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.bloodType = bloodType;
-        this.recordManager = recordManager;
-        this.appointmentManager = appointmentManager;
+        this.recordManager = new RecordManager();
+        this.appointmentManager = new PAppointmentManager();
     }
 
     // Patient-specific methods
-    public void viewMedicalRecord() {
-        recordManager.viewRecords();
-    }
-
-    public void scheduleAppointment(String doctorID) {
-        appointmentManager.schedule(this.getUserID());
-    }
-
-    public void viewAppointments() {
-        appointmentManager.viewAppointments();
-    }
-
-    public void rescheduleAppointment(Appointment oldAppointment, Appointment newAppointment) {
-        appointmentManager.reschedule(oldAppointment, newAppointment);
-    }
-
-    public void cancelAppointment(Appointment appointment) {
-        appointmentManager.cancel(
-        		this.getUserID(),appointment.getDate(),appointment.getTime());
+    @Override
+    public String toString() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return "Patient{" +
+                "dateOfBirth='" + dateFormat.format(dateOfBirth) + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", bloodType='" + bloodType + '\'' +
+                '}';
     }
 
     // Getters and setters
@@ -50,25 +40,34 @@ public class Patient extends User {
         return dateOfBirth;
     }
 
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getBloodType() {
-        return bloodType;
-    }
-
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public String getBloodType() {
+        return bloodType;
     }
+
+    public void setBloodType(String bloodType) {
+        this.bloodType = bloodType;
+    }
+
     public void changePassword(Scanner scanner) {
         System.out.print("Enter your current password: ");
         String currentPassword = scanner.nextLine();
@@ -89,5 +88,12 @@ public class Patient extends User {
         } else {
             System.out.println("Passwords do not match. Password change failed. \n");
         }
+    }
+    public PAppointmentManager get_PAM() {
+        return this.appointmentManager;
+    }
+
+    public RecordManager get_RM() {
+        return this.recordManager;
     }
 }
