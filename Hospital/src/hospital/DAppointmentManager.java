@@ -1,7 +1,6 @@
 package hospital;
 
 import java.util.ArrayList;
-import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.Date;
 import java.text.ParseException;
@@ -28,43 +27,53 @@ public class DAppointmentManager {
         this.scanner = new Scanner(System.in); // Initialize scanner here
     }
 
-    // For patient's edits
+    // For patient's codes
     public ArrayList<Appointment> get_calendar() {
         return this.calendar;
     }
 
-    public ArrayList<Appointment> get_pending() {
-        return this.pending;
+    public boolean cancel_APT(Appointment appointment) {
+    	if (pending.remove(appointment)) {
+		    declined.add(appointment);
+		    System.out.println("Appointment canceled successfully.");        
+		    return true; // Successful cancellation}
+    	}
+    	else {
+	        System.out.println("Appointment not found.");
+	        return false;  // Appointment not found
+        }
     }
     
-    public ArrayList<Appointment> get_declined(){
-    	return this.declined;
+    public boolean patient_choose(Appointment appointment) {
+    	if (calendar.remove(appointment)) {
+		    pending.add(appointment);
+		    System.out.println("Appointment slot taken successfully... wait for acceptance");        
+		    return true; // Successful cancellation}
+    	}
+    	else {
+	        System.out.println("Appointment not found.");
+	        return false;  // Appointment not found
+        }	   	
     }
-
-    public String cancel_APT(String PID, Date date, String time) {
-        ListIterator<Appointment> iterator = accepted.listIterator();
-
-        while (iterator.hasNext()) {
-            Appointment appointment = iterator.next();
-
-            if (appointment.getPatientID().equals(PID) &&
-                appointment.getDate().equals(date) &&
-                appointment.getTime().equals(time)) {
-
-                // Remove the appointment from the accepted list
-                iterator.remove();
-
-                // Update the appointment status
-                appointment.revert();
-                appointment.setPatientID("Empty");
-
-                // Add the updated appointment back to the calendar
-                calendar.add(appointment);
-
-                return "Appointment canceled successfully."; // Successful cancellation
-            }
+    
+    public boolean patient_cancel(Appointment appointment) {
+    	if (accepted.remove(appointment)) {
+		    declined.add(appointment);
+		    System.out.println("Appointment canceled successfully.");        
+		    return true; // Successful cancellation}
+    	}
+    	else {
+	        System.out.println("Appointment not found.");
+	        return false;  // Appointment not found
         }
-        return "Appointment not found."; // Appointment not found
+    }
+    
+    public boolean patient_reschedule_p1(Appointment appointment) {
+    	if (accepted.remove(appointment)) {
+    		calendar.add(appointment);
+    		return true;
+    	}
+    	return false;
     }
 
     // Method to schedule an appointment
@@ -125,6 +134,7 @@ public class DAppointmentManager {
     public void Accept_Appointments() {
         String input;
         int index = 0;
+        HospitalManagementSystem hms = HospitalManagementSystem.getInstance();
 
         System.out.println("Enter which appointment to Accept/Decline:");
         index = scanner.nextInt();
@@ -141,11 +151,20 @@ public class DAppointmentManager {
                 System.out.println("You entered Yes.");
                 removedItem.accept();
                 accepted.add(removedItem);
+                
+                //for patient as well
+                Patient patient = hms.getPatientById(removedItem.getPatientID());
+                patient.get_PAM().doctor_accept(removedItem);        
                 break;
+                
             } else if (input.equalsIgnoreCase("N")) {
                 System.out.println("You entered No.");
                 removedItem.cancel();
                 declined.add(removedItem);
+                
+                //for patient as well
+                Patient patient = hms.getPatientById(removedItem.getPatientID());
+                patient.get_PAM().doctor_reject(removedItem);
                 break;
             } else {
                 System.out.println("Invalid input. Please enter Y or N.");
@@ -157,6 +176,7 @@ public class DAppointmentManager {
         displayAcceptedAppointments();
         int index = getCompletedAppointmentIndex();
         Appointment removedItem = removeAcceptedAppointment(index);
+        HospitalManagementSystem hms = HospitalManagementSystem.getInstance();
 
         String diagnosis = getInput("Enter Diagnosis: ");
         String treatment = getInput("Enter treatment: ");
@@ -167,8 +187,12 @@ public class DAppointmentManager {
         removedItem.get_AOR().set_prescription(medName, medQuantity);
         AppointmentOutcomeManager.NDoutcomeRecords.add(removedItem.get_AOR());
         this.completed.add(removedItem);
-
-        System.out.println("Request for giving medication given to the pharmacy...");
+        
+        //add for patient as well
+        Patient patient = hms.getPatientById(removedItem.getPatientID());
+        patient.get_PAM().remove_from_pending(removedItem);
+        patient.get_RM().add_to_Completed(removedItem);
+        System.out.println("Successful.Requesting for medication from pharmacy...");
     }
 
     // Helper methods to refactor Fill_Completed_Appointment
