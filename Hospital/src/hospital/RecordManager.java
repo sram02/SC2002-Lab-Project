@@ -1,31 +1,71 @@
 package hospital;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Scanner;
 
 public class RecordManager {
-    private List<PatientMedicalRecord> medicalRecords;
+    private ArrayList<Appointment> completed;
 
     public RecordManager() {
-        this.medicalRecords = new ArrayList<>();
+        this.completed = new ArrayList<>();
     }
-
-    public void addRecord(PatientMedicalRecord record) {
-        medicalRecords.add(record);
-        System.out.println("Medical record added successfully.");
+    
+    public ArrayList<Appointment> get_Completed(){
+    	return this.completed;
     }
-
-    public void viewRecords() {
-        System.out.println("Patient Medical Records:");
-        for (PatientMedicalRecord record : medicalRecords) {
-            System.out.println(record);
-        }
+    
+    public void add_to_Completed(Appointment appointment) {
+    	this.completed.add(appointment);
     }
-
-    public void updateRecord(PatientMedicalRecord record) {
-        // Logic to update the specific record
-        System.out.println("Record updated.");
+    
+    public void view_diagoses_treatments(){
+    	for (Appointment appointment : completed) {
+    		System.out.println("On " + appointment.getDate() + ": " );
+    		System.out.println("diagnosis = " + appointment.get_AOR().get_diagnosis()+  "treatment=" + appointment.get_AOR().get_treatment());
+    	}
     }
-
-    // Additional methods to manage records can be added as needed
+    
+    public void updatePersonalInfo(Patient patient, Scanner scanner) {
+    	System.out.println("""
+    			Which information would you like to change?
+    			1. Name/ alias
+    			2. Phone number
+    			3. E-mail address   			
+    			""");
+    	int choice;
+    	String input;
+    	
+    	while (true) {
+    		choice = scanner.nextInt();
+    	
+	    	switch(choice) {
+	    	case 1:
+	    		System.out.println("Enter new name: ");
+	    		input = scanner.nextLine();
+	    		patient.setName(input);
+	    		return;
+	    	case 2:
+	    		System.out.println("Enter phone number: ");
+	    		input = scanner.nextLine();
+	    		patient.setPhoneNumber(input);
+	    		return;
+	    	case 3: 
+	    		System.out.println("Enter new E-mail address: ");
+	    		input = scanner.nextLine();
+	    		patient.setEmail(input);
+	    		return;
+	    	default:
+	    		System.out.println("Invalid input! Try again!");
+	    		break;
+	    	}	
+    	} 	
+    }
+    
+    public void viewAppointmentOutcomes() {
+    	System.out.println("\n Appointment outcomes: ");
+    	for (Appointment appointment: completed) {
+    		appointment.toString();
+    		appointment.get_AOR().toString();
+    	}
+    }
 }
