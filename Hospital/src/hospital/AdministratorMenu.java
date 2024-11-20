@@ -2,55 +2,63 @@ package hospital;
 
 import java.util.Scanner;
 import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Date;
 // import java.util.Iterator;
 import java.util.InputMismatchException;
 
 public class AdministratorMenu {
     private Administrator administrator;
-    private StaffManager staffManager;
     private AdminInventoryManager adminInventoryManager;
-    private HospitalManagementSystem hms; 
-    private Scanner scanner;
+    
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+    HospitalManagementSystem hms = HospitalManagementSystem.getInstance();
+    StaffManager  staffManager = hms.getStaffManager();
+    Scanner scanner = new Scanner(System.in);
 
-    public AdministratorMenu(Administrator administrator, StaffManager staffManager, AdminInventoryManager adminInventoryManager, HospitalManagementSystem hms) {
-        this.administrator = administrator;
-        this.staffManager = staffManager;
-        this.adminInventoryManager = adminInventoryManager;
-        this.hms = hms; 
-        this.scanner = new Scanner(System.in);
+    public AdministratorMenu(Administrator administrator ) {
+    	    this.administrator = administrator;
+    	    this.adminInventoryManager = HospitalManagementSystem.getInstance().getAdminInventoryManager();
     }
 
     public void display() {
         System.out.println("Welcome, " + administrator.getName() + "! This is the Administrator Menu.");
         while (true) {
-            System.out.println("1. Manage Staff");
-            System.out.println("2. View Appointments");
-            System.out.println("3. Manage Inventory");
-            System.out.println("4. Approve Replenishment Requests");
-            System.out.println("5. Change Password");
-            System.out.println("6. Logout \n");
+        	System.out.println("1. Register patient");
+            System.out.println("2. Manage Staff");
+            System.out.println("3. View Appointments");
+            System.out.println("4. Manage Inventory");
+            System.out.println("5. Approve Replenishment Requests");
+            System.out.println("6. Change Password");
+            System.out.println("7. Logout \n");
             System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); 
-
+            int choice = getChoice();
             switch (choice) {
-                case 1:
+            	case 1:
+            		addPatient();
+            		break;
+                case 2:
                     manageStaff();
                     break;
-                case 2:
-                    // View Appointments functionality
-                    break;
                 case 3:
-                	manageInventory();
+                    viewAppointments();
                     break;
                 case 4:
-                    viewAndApproveRequests(); 
+                	manageInventory();
                     break;
                 case 5:
-                    administrator.changePassword(scanner);
+                    viewAndApproveRequests(); 
                     break;
                 case 6:
+                    administrator.changePassword(scanner);
+                    break;
+                case 7:
                     System.out.println("Logging out...");
                     return;
                 default:
@@ -58,6 +66,103 @@ public class AdministratorMenu {
             }
         }
     }
+    
+    private int getChoice() {
+        int choice = -1;
+        while (choice < 1 || choice > 7) {
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number between 1 and 7.");
+            }
+        }
+        return choice;
+    }
+    
+    private void addPatient() {
+        System.out.println("Adding New Patient:");
+
+        // User ID
+        System.out.print("Enter User ID: ");
+        String userID = scanner.nextLine();
+
+        // Check if User ID already exists
+        if (hms.getPatientById(userID) != null || staffManager.getStaffById(userID) != null) {
+            System.out.println("A user with this User ID already exists. Please try again.\n");
+            return;
+        }
+
+        // Name
+        System.out.print("Enter Name: ");
+        String name = scanner.nextLine();
+        if (name.isEmpty() || !name.matches("[a-zA-Z ]+")) {
+            System.out.println("Invalid name. Name must contain only alphabets and should not be empty. Please try again.\n");
+            return;
+        }
+
+        // Date of Birth
+        String dob;
+        while (true) {
+            System.out.print("Enter Date of Birth (yyyy-MM-dd): ");
+            dob = scanner.nextLine();
+            try {
+                LocalDate.parse(dob, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                break;
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format! Please enter in yyyy-MM-dd format.");
+            }
+        }
+
+        // Gender
+        String gender;
+        while (true) {
+            System.out.print("Enter Gender (Male/Female): ");
+            gender = scanner.nextLine();
+            if (gender.equalsIgnoreCase("Male") || gender.equalsIgnoreCase("Female")) {
+                break;
+            }
+            System.out.println("Invalid gender. Please enter 'Male' or 'Female'.");
+        }
+
+        // Email
+        String email;
+        while (true) {
+            System.out.print("Enter Email Address: ");
+            email = scanner.nextLine();
+            if (email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+                break;
+            }
+            System.out.println("Invalid email format. Please enter a valid email address (e.g., name@example.com).");
+        }
+
+        // Phone Number
+        String phoneNumber;
+        while (true) {
+            System.out.print("Enter Phone Number: ");
+            phoneNumber = scanner.nextLine();
+            if (phoneNumber.matches("^[0-9]{10,15}$")) {
+                break;
+            }
+            System.out.println("Invalid phone number. Please enter a valid number with 10-15 digits.");
+        }
+
+        // Blood Type
+        String bloodType;
+        while (true) {
+            System.out.print("Enter Blood Type (e.g., A+, B-, O+, AB-): ");
+            bloodType = scanner.nextLine();
+            if (bloodType.matches("^(A|B|AB|O)[+-]$")) {
+                break;
+            }
+            System.out.println("Invalid blood type. Please enter a valid blood type (e.g., A+, B-, O+, AB-).");
+        }
+
+        // Create Patient
+        Patient patient = new Patient(userID, "defaultPassword", name, gender, dob, phoneNumber, email, bloodType);
+        hms.add_Patient(patient);
+        System.out.println("Patient added successfully.\n");
+    }
+
 
     private void manageStaff() {
         while (true) {
@@ -91,6 +196,57 @@ public class AdministratorMenu {
                     System.out.println("Invalid choice. Please try again.");
             }
         }
+    }
+    
+    private void viewAppointments() {
+    	//see the list of doctors
+    	staffManager.viewStaffByRole(StaffRole.DOCTOR);
+    	
+    	//get doctor by index
+    	String input;
+    	System.out.println("Enter Doctor by ID, to view his appointments: ");
+    	input = scanner.nextLine();
+    	Staff doc = staffManager.getStaffById(input);
+    	//choose to view his appointments
+    	
+    	Doctor doctor;
+    	if (doc instanceof Doctor) {
+    		doctor = (Doctor) doc;
+    	}
+    	else {
+    		System.out.println("Sorry, staff selected is not a doctor. Try again.");
+    		return;
+    	}
+    	
+    	//only view accepted, cancelled, completed.
+    	System.out.println("""
+    			Which appointments would you like to view?
+    			1. Confirmed appointments
+    			2. Cancelled appointments
+    			3. Completed appointments
+    			
+    			input:
+    			""");
+    	
+    	int choice = scanner.nextInt();
+    	
+    	switch(choice) {
+    	case 1:
+    		System.out.println("Confirmed appointments: ");
+    		doctor.get_DAM().View_Upcoming_Appointments();
+    		break;
+    	case 2:
+    		System.out.println("Cancelled appointments: ");
+    		doctor.get_DAM().View_cancelled();
+    		break;
+    	case 3:
+    		System.out.println("Completed appointments: ");
+    		doctor.get_DAM().view_completed();
+    		break;
+    	default:
+    		System.out.println("Invalid choice.");
+    		break;
+    	}
     }
 
     private void viewStaff() {
@@ -187,8 +343,6 @@ public class AdministratorMenu {
                 System.out.println("Invalid role. Staff not added.");
                 return;
         }
-
-        staffManager.addStaff(newStaff);
         System.out.println("Staff added successfully.\n");
     }
 
@@ -347,6 +501,11 @@ public class AdministratorMenu {
 
         // Temp list to hold requests to be removed after iteration
         List<ReplenishmentRequest> approvedRequests = new ArrayList<>();
+        
+        if (adminInventoryManager.getPendingRequests().isEmpty()) {
+        	System.out.println("No pending requests available. Quitting...");
+        	return;
+        }
 
         for (ReplenishmentRequest request : adminInventoryManager.getPendingRequests()) {
             System.out.println("Medicine: " + request.getMedicineName() + ", Quantity: " + request.getRequestedQuantity());

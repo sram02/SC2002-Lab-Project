@@ -2,12 +2,13 @@ package hospital;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class AppointmentOutcomeManager {
     private static AppointmentOutcomeManager instance;
 
     // Static list to store non-dispensed outcome records
-    public static List<AppointmentOutcomeRecord> NDoutcomeRecords;
+    private static List<AppointmentOutcomeRecord> NDoutcomeRecords = new ArrayList<>();
 
     // Scanner for user input
     private static final Scanner scanner = new Scanner(System.in);
@@ -24,24 +25,27 @@ public class AppointmentOutcomeManager {
     }
 
     // View all Appointment Outcome Records
-    public void viewAORs() {
+    public boolean viewAORs() {
         if (NDoutcomeRecords == null || NDoutcomeRecords.isEmpty()) {
             System.out.println("No records to display.");
-            return;
+            return false;
         }
 
         int index = 0;
         for (AppointmentOutcomeRecord record : NDoutcomeRecords) {
-            System.out.println(index + ". " + record);
+            System.out.println(index + ". ") ;
+            record.toString();
             index++;
         }
+        return true;
     }
 
     // Prescribe medication and dispense
     public void prescribe(InventoryManager PIM) {
-        viewAORs();
+        if (!viewAORs()) 
+        	return;
+        
         int index = -1;
-
         // Loop to ensure valid index input
         while (index < 0 || index >= NDoutcomeRecords.size()) {
             System.out.println("Enter the record number to dispense for: ");
@@ -57,13 +61,18 @@ public class AppointmentOutcomeManager {
         }
 
         // Remove the selected record
-        AppointmentOutcomeRecord record = NDoutcomeRecords.remove(index);
+        AppointmentOutcomeRecord record = NDoutcomeRecords.get(index);
 
-        // Remove from the inventory
+        // Remove from inventory
         String medname = record.get_PM().getName();
         int quantity = record.get_PM().getQuantity();
         if (PIM.takeMedicine(medname, quantity)) {
             record.get_PM().dispense();
+            NDoutcomeRecords.remove(index);
         }
+    }
+    
+    public void add_AOR(AppointmentOutcomeRecord record) {
+    	NDoutcomeRecords.add(record);
     }
 }

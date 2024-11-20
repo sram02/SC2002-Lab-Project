@@ -9,7 +9,7 @@ import java.io.IOException;
 public class Inventory {
     private List<Medicine> medicines;
 
-    public Inventory() {
+    public Inventory() { //the only one in the game
         this.medicines = new ArrayList<>();
     }
 
@@ -29,7 +29,7 @@ public class Inventory {
                 return medicine;
             }
         }
-        return null; // Return null if not found
+        return null; 
     }
 
     public List<Medicine> getMedicines() {

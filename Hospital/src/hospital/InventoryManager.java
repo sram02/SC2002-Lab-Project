@@ -23,6 +23,12 @@ public class InventoryManager {
             System.out.println("Medicine '" + medName + "' not found in inventory.");
             return false;
         }
+        
+     // Case 3: Medicine stock is not enough. Return false and do nothing
+        if (medicine.getStockLevel() < quantity) {
+            System.out.println("Stock level for '" + medName + "' is too low. Please request replenishment.");
+            return false;
+        }
 
         // Case 2: Medicine is at the low stock level. Urge to submit request, but successfully taken medicine
         if (medicine.getStockLevel() - quantity < medicine.getLowStockThreshold()) {
@@ -32,11 +38,6 @@ public class InventoryManager {
             return true;
         }
 
-        // Case 3: Medicine stock is not enough. Return false and do nothing
-        if (medicine.getStockLevel() < quantity) {
-            System.out.println("Stock level for '" + medName + "' is too low. Please request replenishment.");
-            return false;
-        }
 
         // Case 4: Medicine is enough. Successfully taken medicine
         medicine.setStockLevel(medicine.getStockLevel() - quantity);

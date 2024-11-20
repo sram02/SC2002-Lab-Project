@@ -17,9 +17,15 @@ public class AppointmentOutcomeRecord {
 
     @Override
     public String toString() {
-        System.out.println("AppointmentOutcomeRecord{" + "diagnosis=" + diagnosis + ", treatment=" + treatment);
+        System.out.println("AppointmentOutcomeRecord\n" + "diagnosis=" + diagnosis + ", treatment=" + treatment);
         System.out.println("Prescription name: " + prescription.getName());
         System.out.println("Prescription Quantity: " + prescription.getQuantity());
+        if (prescription.isDispensedStatus()) {
+        	System.out.println("Medicine has been dispensed.");
+        }
+        else {
+        	System.out.println("Medicine has not yet been dispensed.");
+        }
         return "\n";
     }
  

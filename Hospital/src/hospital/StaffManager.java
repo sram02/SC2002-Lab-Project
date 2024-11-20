@@ -4,6 +4,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class StaffManager {
     private static List<Staff> staffList = new ArrayList<>(); // Initialize the list
@@ -15,7 +17,45 @@ public class StaffManager {
     // Private constructor to prevent instantiation
     private StaffManager(String staffCsvFilePath) {
         this.staffCsvFilePath = staffCsvFilePath;
+        loadStaffFromFile();
     }
+    
+    private void loadStaffFromFile() {
+        try (BufferedReader br = new BufferedReader(new FileReader(staffCsvFilePath))) {
+            String line = br.readLine(); // Skip the header
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                if (values.length >= 5) { // Ensure correct number of columns
+                    String userID = values[0].trim();
+                    String name = values[1].trim();
+                    String role = values[2].trim().toUpperCase();
+                    String gender = values[3].trim();
+                    int age = Integer.parseInt(values[4].trim());
+
+                    Staff staff;
+                    switch (role) {
+                        case "DOCTOR":
+                            staff = new Doctor(userID, "password", name, gender, age);
+                            break;
+                        case "PHARMACIST":
+                            staff = new Pharmacist(userID, "password", name, gender, age, new InventoryManager(HospitalManagementSystem.getInventory()));
+                            break;
+                        case "ADMINISTRATOR":
+                            staff = new Administrator(userID, "password", name, gender, age, HospitalManagementSystem.getAdminInventoryManager());
+                            break;
+                        default:
+                            System.out.println("Unknown role: " + role + " for userID: " + userID);
+                            continue; // Skip invalid roles
+                    }
+                    staffList.add(staff);
+                }
+            }
+            
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Error loading staff from file: " + e.getMessage());
+        }
+    }
+
 
     // Public static method to get the instance of the class
     public static StaffManager getInstance(String staffCsvFilePath) {

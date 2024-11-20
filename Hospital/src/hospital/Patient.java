@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
 public class Patient extends User {
-    private String dateOfBirth; // Updated to Date type
+    private String dateOfBirth;
     private String phoneNumber;
     private String email;
     private String bloodType;
@@ -26,16 +26,17 @@ public class Patient extends User {
     // Patient-specific methods
     @Override
     public String toString() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        return "Patient{" +
-                "dateOfBirth='" + dateFormat.format(dateOfBirth) + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", email='" + email + '\'' +
-                ", bloodType='" + bloodType + '\'' +
-                '}';
+        return "Patient Information:\n" +
+        		"ID: " + this.getUserID() + "\n" +
+                "Name: " + getName() + "\n" +
+                "Date of Birth: " + dateOfBirth + "\n" +
+                "Gender: " + this.getGender() + "\n" +
+                "Phone Number: " + phoneNumber + "\n" +
+                "Email: " + email + "\n" +
+                "Blood Type: " + bloodType + "\n";
     }
 
-    // Getters and setters
+    // Getters and setters remain the same
     public String getDateOfBirth() {
         return dateOfBirth;
     }
@@ -89,6 +90,7 @@ public class Patient extends User {
             System.out.println("Passwords do not match. Password change failed. \n");
         }
     }
+    
     public PAppointmentManager get_PAM() {
         return this.appointmentManager;
     }

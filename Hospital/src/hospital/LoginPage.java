@@ -20,10 +20,10 @@ public class LoginPage {
         User user = hms.login(userID, password);
 
         if (user != null) {
-            System.out.println("Login successful!");
+            System.out.println("Login successful!\n");
             return user;  // Return the logged-in user
         } else {
-            System.out.println("Invalid credentials. Please try again.");
+            System.out.println("Invalid credentials. Please try again.\n");
             return null;  // Return null for unsuccessful login
         }
     }

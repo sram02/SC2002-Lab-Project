@@ -1,4 +1,3 @@
-
 package hospital;
 
 import java.util.ArrayList;
@@ -18,14 +17,14 @@ public class PAppointmentManager {
 
     // Schedule an appointment as a request to the doctor
     
-    public void schedule(String patientID) {
-    	
-    	//viewing all doctors
-    	StaffManager SM = HospitalManagementSystem.getStaffManager();
-    	int selectedSlot;
-    	Doctor doctor;
-    	
-    	SM.viewStaffByRole(StaffRole.DOCTOR);
+    public void schedule(Patient patient) {
+        // Viewing all doctors
+        StaffManager SM = HospitalManagementSystem.getStaffManager();
+        int selectedSlot;
+        Doctor doctor;
+
+        SM.viewStaffByRole(StaffRole.DOCTOR);
+        
         // Let patient choose a doctor by ID
         System.out.print("Enter the ID of the doctor you wish to book an appointment with: ");
         String doctorID = scanner.nextLine();
@@ -38,105 +37,110 @@ public class PAppointmentManager {
             System.out.println("Doctor not found.");
             return;
         }
-        //View the doctors calendar using View_Schedule()
+
         if (selectedDoctor instanceof Doctor) {
             doctor = (Doctor) selectedDoctor;
-            doctor.get_DAM().View_Schedule();
-
-            // Prompt user to quit or continue
-            System.out.print("Do you want to quit? (Y/N): ");
-            String userInput = scanner.nextLine().trim().toUpperCase();
-
-            if (userInput.equals("Y")) {
-                System.out.println("Exiting the appointment selection process.");
-                return; // Exits the method
-            } else if (!userInput.equals("N")) {
-                System.out.println("Invalid input. Assuming 'No' and proceeding...");
+            
+            // Check if calendar is empty
+            if (doctor.get_DAM().get_calendar().isEmpty()) {
+                System.out.println("No available appointments for this doctor. Please select another doctor.");
+                return;
             }
 
-            // Step 4: Select an appointment slot by index (moved inside the if block)
-            System.out.print("Select an available slot by number: ");
+            doctor.get_DAM().View_Schedule();
+
+            // Prompt user to select an appointment slot
+            System.out.print("Select an available slot by number (or enter -1 to go back): ");
             selectedSlot = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
-        } 
-        else {
-        	System.out.println("Selected staff is not a doctor.");
-        	return;
+
+            // Allow option to go back
+            if (selectedSlot == -1) {
+
+                return;
+            }
+        } else {
+            System.out.println("Selected staff is not a doctor.");
+            return;
         }
+
         if (selectedSlot >= 0 && selectedSlot < doctor.get_DAM().get_calendar().size()) {
-        	Appointment chosenSlot = doctor.get_DAM().get_calendar().get(selectedSlot);
-            chosenSlot.setPatientID(patientID);
+            Appointment chosenSlot = doctor.get_DAM().get_calendar().get(selectedSlot);
+            chosenSlot.setPatientID(patient.getUserID());
+
             this.pending.add(chosenSlot);
             doctor.get_DAM().patient_choose(chosenSlot);
+            doctor.get_DRM().addPatient(patient);
             System.out.println("Appointment request sent successfully! Waiting for doctor's approval.");
             return;
-        } 
+        }
     }
     
     public void view_appointment(ArrayList<Appointment> list) {
-    	if (list.isEmpty()) {
-    		System.out.println("None found... exiting.");
-    		return;
-    	}
-    	
-    	for (Appointment appointment: list) {
-    		appointment.toString();
-    	}
+      if (list.isEmpty()) {
+        System.out.println("None found... exiting.");
+        return;
+      }
+      
+      int index = 0;
+      for (Appointment appointment: list) {
+        System.out.print(index + ".");
+        appointment.toString();
+        index++;
+      }
     }
 
 
     // View all appointments with their current status
     public void viewAppointments(RecordManager RM) {
-    	
+      
         System.out.println("""
-        		Choose the following to view:
-        		1. Pending appointments
-        		2. Confirmed appointments
-        		3. Cancelled appointments
-        		4. Completed appointments
-        		""");
+            Choose the following to view:
+            1. Pending appointments
+            2. Confirmed appointments
+            3. Cancelled appointments
+            4. Completed appointments
+            """);
         
         int choice = scanner.nextInt();
         
         switch(choice) {
         case 1:
-        	System.out.println("\nPending Appointments:");
-        	this.view_appointment(pending);
-        	break;
-        	
+          System.out.println("\nPending Appointments:");
+          this.view_appointment(pending);
+          break;
+          
         case 2:
-        	System.out.println("\n Confirmed Appointments:");
-        	this.view_appointment(accepted);
-        	break;
+          System.out.println("\n Confirmed Appointments:");
+          this.view_appointment(accepted);
+          break;
         
-	    case 3:
-	    	System.out.println("\nCancelled Appointments:");
-	    	this.view_appointment(declined);
-	    	break;
-	    	
-	    case 4:
-        	System.out.println("\nCompleted Appointments:");
-        	this.view_appointment(RM.get_Completed());
-        	break;
+      case 3:
+        System.out.println("\nCancelled Appointments:");
+        this.view_appointment(declined);
+        break;
+        
+      case 4:
+          System.out.println("\nCompleted Appointments:");
+          this.view_appointment(RM.get_Completed());
+          break;
         }
 
     }
 
+
     // Cancel an appointment
     public void cancel() {
-    	StaffManager SM = HospitalManagementSystem.getStaffManager();
-    	
-    	// Display all accepted appointments
-        System.out.println("\nYour Current Appointments:");
-        int index = 0;
+      StaffManager SM = HospitalManagementSystem.getStaffManager();
+      
+      // Display all accepted appointment
         if (accepted.isEmpty()) {
             System.out.println("You have no appointments to cancel.");
             return;
         }
-        
-        for (Appointment appointment : accepted) {
-            System.out.println(index + ". " + appointment);
-            index++;
+        else {
+          System.out.println("\nYour Current Appointments:");
+          this.view_appointment(accepted);
         }
         
         // Get user selection
@@ -145,7 +149,7 @@ public class PAppointmentManager {
         scanner.nextLine(); // Consume newline
         
         Staff doctor;
-		// Validate selection
+    // Validate selection
         if (selection >= 0 && selection < accepted.size()) {
             // Get the selected appointment
             Appointment appointmentToCancel = accepted.remove(selection);
@@ -165,23 +169,21 @@ public class PAppointmentManager {
             }
         }
         else {
-        	System.out.println("Invalid selection. Please try again.");
+          System.out.println("Invalid selection. Please try again.");
         } 
     }
 
-	public void reschedule(String PID) {
-		StaffManager SM = HospitalManagementSystem.getStaffManager();
-		// Display all accepted appointments
-        System.out.println("\nYour Current Appointments:");
-        int index = 0;
+  public void reschedule(Patient patient) {
+    StaffManager SM = HospitalManagementSystem.getStaffManager();
+    // Display all accepted appointments
+        
         if (accepted.isEmpty()) {
             System.out.println("You have no appointments to reschedule.");
             return;
         }
-        
-        for (Appointment appointment : accepted) {
-            System.out.println(index + ". " + appointment);
-            index++;
+        else {
+          System.out.println("\nYour Current Appointments:");
+          this.view_appointment(accepted);
         }
         
         // Get user selection
@@ -190,7 +192,7 @@ public class PAppointmentManager {
         scanner.nextLine(); // Consume newline
         
         Staff doctor;
-		// Validate selection
+    // Validate selection
         if (selection >= 0 && selection < accepted.size()) {
             // Get the selected appointment
             Appointment appointment = accepted.remove(selection);
@@ -201,7 +203,7 @@ public class PAppointmentManager {
             if (doctor instanceof Doctor) {
                 Doctor selectedDoctor = (Doctor) doctor;
                 selectedDoctor.get_DAM().patient_reschedule_p1(appointment);
-                this.schedule(PID);
+                this.schedule(patient);
             }
             else{
                 System.out.println("Doctor not found.");
@@ -209,29 +211,28 @@ public class PAppointmentManager {
             }
         }
         else {
-        	System.out.println("Invalid selection. Please try again.");
+          System.out.println("Invalid selection. Please try again.");
         } 
+  }
+  
+  public void remove_from_pending(Appointment appointment) {
+    for (Appointment APP: pending) {
+      if (APP.equals(appointment)){
+        pending.remove(APP);
+        break;
+      }
+    }
+  }
+  
+  public void doctor_accept(Appointment appointment) {
+    this.remove_from_pending(appointment);
+    accepted.add(appointment);
+  }
     
-		
-	}
-	
-	public void remove_from_pending(Appointment appointment) {
-		for (Appointment APP: pending) {
-			if (APP.equals(appointment)){
-				pending.remove(APP);
-				break;
-			}
-		}
-	}
-	
-	public void doctor_accept(Appointment appointment) {
-		this.remove_from_pending(appointment);
-		accepted.add(appointment);
-	}
-    
-	public void doctor_reject(Appointment appointment) {
-		this.remove_from_pending(appointment);
-		declined.add(appointment);
-	}
+  public void doctor_reject(Appointment appointment) {
+    this.remove_from_pending(appointment);
+    declined.add(appointment);
+  }
     
 }
+

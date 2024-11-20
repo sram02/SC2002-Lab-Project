@@ -6,14 +6,12 @@ import java.util.InputMismatchException;
 
 public class PharmacistMenu {
     private Pharmacist pharmacist;
-    private InventoryManager inventoryManager;
-    private AdminInventoryManager adminInventoryManager;
     private Scanner scanner;
+    
+    HospitalManagementSystem hms = HospitalManagementSystem.getInstance();
 
-    public PharmacistMenu(Pharmacist pharmacist, InventoryManager inventoryManager, AdminInventoryManager adminInventoryManager) {
+    public PharmacistMenu(Pharmacist pharmacist) {
         this.pharmacist = pharmacist;
-        this.inventoryManager = inventoryManager;
-        this.adminInventoryManager = adminInventoryManager;
         this.scanner = new Scanner(System.in);
     }
 
@@ -21,14 +19,13 @@ public class PharmacistMenu {
         System.out.println("Welcome, " + pharmacist.getName() + "! This is the Pharmacist Menu.");
         while (true) {
             System.out.println("1. View Appointment Outcome Record");
-            System.out.println("2. Update Prescription Status");
+            System.out.println("2. Prescribe");
             System.out.println("3. View Inventory");
             System.out.println("4. Submit Replenishment Request");
             System.out.println("5. Change Password");
             System.out.println("6. Logout \n");
             System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();  
+            int choice = getChoice(); 
 
             switch (choice) {
                 case 1:
@@ -38,7 +35,7 @@ public class PharmacistMenu {
                 case 2:
                     // Update Prescription Status logic
                 	System.out.println("Updating prescription status...");
-                	pharmacist.getAOM().prescribe(scanner, inventoryManager);
+                	pharmacist.getAOM().prescribe(pharmacist.getInventoryManager());
                     break;
                 case 3:
                     pharmacist.viewInventory();
@@ -48,7 +45,7 @@ public class PharmacistMenu {
                     String medicineName = scanner.nextLine();
 
                     // Check if medicine exist in inventory
-                    if (inventoryManager.getInventory().getMedicineByName(medicineName) == null) {
+                    if (pharmacist.getInventoryManager().getInventory().getMedicineByName(medicineName) == null) {
                         System.out.println("Invalid medicine. Please try again.\n");
                         break;
                     }
@@ -63,8 +60,7 @@ public class PharmacistMenu {
                         scanner.nextLine(); 
                         break;
                     }
-
-                    pharmacist.submitReplenishmentRequest(medicineName, quantity, adminInventoryManager);
+                    pharmacist.submitReplenishmentRequest(medicineName, quantity, hms.getAdminInventoryManager());
                     break;
                 case 5:
                     pharmacist.changePassword(scanner);
@@ -76,5 +72,16 @@ public class PharmacistMenu {
                     System.out.println("Invalid choice. Please try again.");
             }
         }
+    }
+    private int getChoice() {
+        int choice = -1;
+        while (choice < 1 || choice > 6) {
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number between 1 and 6.");
+            }
+        }
+        return choice;
     }
 }

@@ -17,31 +17,31 @@ public class DoctorMenu {
             int choice = getChoice();
             
             switch (choice) {
-                case 0:
+                case 1:
                     changePassword();
                     break;
-                case 1:
+                case 2:
                     viewPatientRecords();
                     break;
-                case 2:
+                case 3:
                     updatePatientRecords();
                     break;
-                case 3:
+                case 4:
                     viewSchedule();
                     break;
-                case 4:
+                case 5:
                     setAvailability();
                     break;
-                case 5:
+                case 6:
                     viewUpcomingAppointments();
                     break;
-                case 6:
+                case 7:
                     acceptDeclineAppointments();
                     break;
-                case 7:
+                case 8:
                     fillCompletedAppointments();
                     break;
-                case 8:
+                case 9:
                     if (confirmLogout()) {
                         System.out.println("Logging out...");
                         return; // Exit the menu and go back to the main login screen
@@ -56,25 +56,25 @@ public class DoctorMenu {
 
     private void showMenu() {
         System.out.println("Welcome, Dr. " + doctor.getName() + "! This is the Doctor Menu.");
-        System.out.println("0. Change password");
-        System.out.println("1. View Patient Medical Records under my care");
-        System.out.println("2. Update Patient Medical Records under my care");
-        System.out.println("3. View my personal schedule");
-        System.out.println("4. Set Availability for new appointments");
-        System.out.println("5. View list of upcoming appointments");
-        System.out.println("6. Accept/Decline appointments");
-        System.out.println("7. Fill up completed appointments");
-        System.out.println("8. Logout");
+        System.out.println("1. Change password");
+        System.out.println("2. View Patient Medical Records under my care");
+        System.out.println("3. Update Patient Medical Records under my care");
+        System.out.println("4. View my personal schedule");
+        System.out.println("5. Set Availability for new appointments");
+        System.out.println("6. View list of upcoming appointments");
+        System.out.println("7. Accept/Decline appointments");
+        System.out.println("8. Fill up completed appointments");
+        System.out.println("9. Logout");
         System.out.print("Enter your choice: ");
     }
 
     private int getChoice() {
         int choice = -1;
-        while (choice < 0 || choice > 8) {
+        while (choice < 1 || choice > 9) {
             try {
                 choice = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number between 0 and 8.");
+                System.out.println("Invalid input. Please enter a number between 1 and 9.");
             }
         }
         return choice;
@@ -90,12 +90,12 @@ public class DoctorMenu {
 
     private void viewPatientRecords() {
         System.out.println("Viewing patient records...");
-        this.doctor.get_DRM().viewPatientMedicalRecord();
+        this.doctor.get_DRM().viewPatientMedicalRecord(scanner);
     }
 
     private void updatePatientRecords() {
         System.out.println("Updating patient records...");
-        this.doctor.get_DRM().UpdatePatientRecord();
+        this.doctor.get_DRM().UpdatePatientRecord(scanner);
     }
 
     private void viewSchedule() {

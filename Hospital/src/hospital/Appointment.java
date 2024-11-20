@@ -1,7 +1,8 @@
 
 package hospital;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Appointment {
 	
@@ -11,13 +12,13 @@ public class Appointment {
 	
     private String patientID;
     private String doctorID;
-    private Date date;
+    private LocalDate date;
     private String time;
     private AppointmentStatus status;
     private AppointmentOutcomeRecord AppointmentOutcome;
 
     
-    public Appointment(String patientID, String doctorID, Date date, String time) {
+    public Appointment(String patientID, String doctorID, LocalDate date, String time) {
         this.patientID = patientID;
         this.doctorID = doctorID;
         this.date = date;
@@ -39,7 +40,7 @@ public class Appointment {
         return doctorID;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
@@ -69,8 +70,33 @@ public class Appointment {
 
     @Override
     public String toString() {
-        System.out.println("Appointment with Doctor ID: " + doctorID + ", Date: " + date + ", Time: " + time);
+    	DateTimeFormatter dateOnlyFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // Format the LocalDate
+        String formattedDate = date.format(dateOnlyFormat);
+    	
+        System.out.println("Appointment with Doctor ID: " + doctorID + 
+        		", Date: " + formattedDate 
+        		+ ", Time: " + time);
         System.out.println("Patient ID: " + patientID);
+        
+        switch (status) {
+		case CANCELLED:
+			System.out.println("Status: Cancelled");
+			break;
+		case COMPLETED:
+			System.out.println("Status: Completed");
+			break;
+		case CONFIRMED:
+			System.out.println("Status: Confirmed");
+			break;
+		case PENDING:
+			System.out.println("Status: Pending");
+			break;
+		default:
+			break;
+        	
+        }
         return "\n";
     }
     

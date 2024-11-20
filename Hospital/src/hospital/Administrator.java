@@ -7,7 +7,7 @@ public class Administrator extends Staff {
 
     public Administrator(String userID, String password, String name, String gender, int age, AdminInventoryManager inventoryManager) {
         super(userID, password, name, gender, age, StaffRole.ADMINISTRATOR);
-        this.inventoryManager = inventoryManager;
+        
     }
 
     public AdminInventoryManager getInventoryManager() {

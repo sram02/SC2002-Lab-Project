@@ -36,16 +36,19 @@ public class DRecordManager {
             System.out.println();
         }
 
-        System.out.println("Which patient's medical record would you like to see?: ");
+        System.out.println("Which patient's record would you like to see further?: ");
         index = scanner.nextInt();
         scanner.nextLine(); // Consume newline
 
         if (index >= 0 && index < patients.size()) {
             Patient item = patients.get(index);
-            displayPatientInfo(item);
+            if (item.get_RM().get_Completed().isEmpty()){
+            	System.out.println("Patient has no completed appointments.");
+            	return;
+            }
 
             // Display completed appointment records
-            for (Appointment appointment : item.get_RM().getCompleted()) {
+            for (Appointment appointment : item.get_RM().get_Completed()) {
                 displayAppointmentInfo(appointment);
             }
         } else {
@@ -56,6 +59,8 @@ public class DRecordManager {
     // Method to update patient's medical record
     public void UpdatePatientRecord(Scanner scanner) {
         int index = 0;
+
+        // Display all patients
         for (Patient patient : patients) {
             System.out.println(index + ". ");
             displayPatientInfo(patient);
@@ -71,21 +76,29 @@ public class DRecordManager {
             Patient item = patients.get(index);
             index = 0;
 
-            // Display completed appointments for editing
-            for (Appointment appointment : item.get_RM().getCompleted()) {
+            // Display all completed appointments
+            for (Appointment appointment : item.get_RM().get_Completed()) {
                 System.out.println(index + ". ");
                 displayAppointmentInfo(appointment);
                 index++;
             }
 
-            System.out.println("Which record would you like to edit?");
+            System.out.println("Which appointment would you like to edit?");
             index = scanner.nextInt();
             scanner.nextLine(); // Consume newline
 
-            if (index >= 0 && index < item.get_RM().getCompleted().size()) {
-                AppointmentOutcomeRecord record = item.get_RM().getCompleted().get(index);
-                updateDiagnosis(scanner, record);
-                updateTreatment(scanner, record);
+            if (index >= 0 && index < item.get_RM().get_Completed().size()) {
+                Appointment appointment = item.get_RM().get_Completed().get(index);
+
+                // Retrieve the AppointmentOutcomeRecord from the Appointment
+                AppointmentOutcomeRecord record = appointment.get_AOR();
+
+                if (record != null) {
+                    updateDiagnosis(scanner, record);
+                    updateTreatment(scanner, record);
+                } else {
+                    System.out.println("No outcome record available to update for this appointment.");
+                }
             } else {
                 System.out.println("Invalid index. Please try again.");
             }
@@ -93,6 +106,7 @@ public class DRecordManager {
             System.out.println("Invalid index. Please try again.");
         }
     }
+
 
     // Method to update the diagnosis of a completed appointment
     private void updateDiagnosis(Scanner scanner, AppointmentOutcomeRecord record) {
@@ -114,5 +128,11 @@ public class DRecordManager {
             String newInput = scanner.nextLine();
             record.set_treatment(newInput);
         }
+    }
+    
+    public void addPatient(Patient patient) {
+    	if (!patients.contains(patient)) {
+    		this.patients.add(patient);
+    	}
     }
 }
